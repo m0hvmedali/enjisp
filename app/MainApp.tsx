@@ -11,11 +11,12 @@ import WishesTab from '@/components/tabs/WishesTab';
 import VentTab from '@/components/tabs/VentTab';
 import ProfileTab from '@/components/tabs/ProfileTab';
 import SettingsPage from '@/app/settings/page';
-import { User, Sparkles, LogIn, Heart } from 'lucide-react';
+import { User, Sparkles, LogIn, Heart, Menu } from 'lucide-react';
+import Sidebar from '@/components/Sidebar';
 import toast from 'react-hot-toast';
 
 export default function MainApp() {
-    const { userName, setUserName, userId, setUserId, pullFromCloud } = useStudyStore();
+    const { userName, setUserName, userId, setUserId, pullFromCloud, toggleSidebar } = useStudyStore();
     const [activeTab, setActiveTab] = useState('home');
     const [mounted, setMounted] = useState(false);
     const [tempUserId, setTempUserId] = useState('');
@@ -80,7 +81,26 @@ export default function MainApp() {
             <div className="fixed inset-0 bg-cosmic-mesh animate-mesh opacity-30 pointer-events-none" />
             <div className="fixed top-0 left-0 w-full h-full bg-cosmic-gradient pointer-events-none" />
 
-            <main className="relative z-10 pb-32">
+            <Sidebar />
+
+            <header className="fixed top-0 left-0 right-0 h-20 px-6 flex items-center justify-between z-40 bg-zinc-950/50 backdrop-blur-xl border-b border-white/5">
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={toggleSidebar}
+                        className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-all border border-white/10 group"
+                    >
+                        <Menu size={24} className="text-cine-accent group-hover:scale-110 transition-transform" />
+                    </button>
+                    <h2 className="text-xl font-black font-arabic text-white">إنجي هانم ✨</h2>
+                </div>
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-cine-accent/20 border border-cine-accent/30 flex items-center justify-center animate-shine overflow-hidden">
+                        <Sparkles size={18} className="text-cine-accent animate-pulse" />
+                    </div>
+                </div>
+            </header>
+
+            <main className="relative z-10 pb-32 pt-24">
                 <AnimatePresence mode="wait">
                     {activeTab === 'home' && <HomePage key="home" />}
                     {activeTab === 'schedule' && <ScheduleTab key="schedule" />}

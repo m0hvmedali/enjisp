@@ -101,24 +101,70 @@ export default function HomeTab() {
                 <button className="text-gray-500 hover:text-cine-accent transition-colors font-arabic font-bold text-sm">عرض الكل</button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 px-2">
+            <div className="flex overflow-x-auto gap-6 px-2 pb-10 no-scrollbar snap-x snap-mandatory">
                 {studyPlan.map((subject: Subject) => {
                     const totalMissionsSub = subject.missions?.length || 0;
                     const completedCountSub = subject.missions?.filter(m => completedMissions[m.id]).length || 0;
                     const progressSub = totalMissionsSub > 0 ? (completedCountSub / totalMissionsSub) * 100 : 0;
 
                     return (
-                        <SubjectCard
+                        <motion.div
                             key={subject.id}
-                            icon={subject.icon}
-                            name={subject.name}
-                            progress={progressSub}
-                            lessonInfo={subject.lessonDay || 'لا يوجد موعد محدد'}
-                            gradient={subject.theme.gradient}
-                            completedCount={completedCountSub}
-                            totalCount={totalMissionsSub}
+                            whileHover={{ y: -10, scale: 1.02 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => router.push(`/subject/${subject.id}`)}
-                        />
+                            className="relative min-w-[280px] h-[450px] rounded-[2.5rem] overflow-hidden snap-center cursor-pointer group shrink-0 shadow-2xl shadow-black/40 border border-white/5"
+                        >
+                            {/* Background Image */}
+                            <img
+                                src={subject.scheduleImage || 'https://images.unsplash.com/photo-1614728263952-84ea206f99b6?auto=format&fit=crop&q=80'}
+                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                alt={subject.name}
+                            />
+
+                            {/* Cinematic Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-cine-dark via-cine-dark/20 to-transparent group-hover:opacity-40 transition-opacity" />
+                            <div className={`absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity bg-gradient-to-br ${subject.theme.gradient}`} />
+
+                            {/* Story Progress Lines */}
+                            <div className="absolute top-6 left-6 right-6 flex gap-1.5 z-20">
+                                <div className="h-1 flex-1 bg-white/20 rounded-full overflow-hidden">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${progressSub}%` }}
+                                        className="h-full bg-cine-accent shadow-[0_0_10px_#00f2ff]"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Content */}
+                            <div className="absolute inset-0 p-8 flex flex-col justify-end z-10">
+                                <motion.div
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    className="flex flex-col items-start"
+                                >
+                                    <div className="text-5xl mb-4 drop-shadow-2xl filter brightness-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] group-hover:scale-110 transition-transform">
+                                        {subject.icon}
+                                    </div>
+                                    <h3 className="text-3xl font-black font-arabic text-white mb-2 drop-shadow-lg">
+                                        {subject.name}
+                                    </h3>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-cine-accent animate-pulse" />
+                                        <span className="text-xs font-bold font-arabic text-cine-accent tracking-widest uppercase opacity-80">
+                                            {subject.theme.scientist}
+                                        </span>
+                                    </div>
+                                </motion.div>
+                            </div>
+
+                            {/* Stats Badge */}
+                            <div className="absolute bottom-8 right-8 bg-black/40 backdrop-blur-xl border border-white/10 px-4 py-2 rounded-2xl flex items-center gap-2 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                                <span className="text-white font-black text-sm">{completedCountSub}</span>
+                                <span className="text-gray-500 text-[10px] font-arabic">مهمة تمّت</span>
+                            </div>
+                        </motion.div>
                     );
                 })}
             </div>

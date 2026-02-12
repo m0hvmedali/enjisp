@@ -33,8 +33,10 @@ interface StudyState {
     wishes: Wish[];
     ventLogs: VentLog[];
     timeline: TimelineEvent[];
+    isSidebarOpen: boolean;
 
     // Actions
+    toggleSidebar: () => void;
     setUserId: (id: string | null) => void;
     setUserName: (name: 'Mohamed' | 'Enji' | null) => void;
     toggleMission: (missionId: string) => void;
@@ -60,6 +62,9 @@ export const useStudyStore = create<StudyState>()(
             wishes: [],
             ventLogs: [],
             timeline: [],
+            isSidebarOpen: false,
+
+            toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
 
             setUserId: (id) => set({ userId: id }),
             setUserName: (name) => {

@@ -9,7 +9,7 @@ import RightPanel from '@/components/RightPanel';
 import MobileNav from '@/components/MobileNav';
 import MissionCard from '@/components/MissionCard';
 import MissionModal from '@/components/MissionModal';
-import { ArrowLeft, Search, Filter, Sparkles, BookOpen, Maximize2, X } from 'lucide-react';
+import { ArrowLeft, Search, Filter, Sparkles, BookOpen, Maximize2, X, Menu } from 'lucide-react';
 import toast from 'react-hot-toast';
 import type { Mission } from '@/types';
 
@@ -17,7 +17,7 @@ export default function SubjectPage() {
     const params = useParams();
     const router = useRouter();
     const subjectId = params?.id as string;
-    const { studyPlan, completedMissions, toggleMission } = useStudyStore();
+    const { studyPlan, completedMissions, toggleMission, toggleSidebar } = useStudyStore();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -128,7 +128,24 @@ export default function SubjectPage() {
 
             <Sidebar />
 
-            <main className="flex-1 pb-24 lg:pb-8 overflow-y-auto overflow-x-hidden relative z-10">
+            <header className="fixed top-0 left-0 right-0 h-20 px-6 flex items-center justify-between z-40 bg-zinc-950/50 backdrop-blur-xl border-b border-white/5 lg:hidden">
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={toggleSidebar}
+                        className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-all border border-white/10 group"
+                    >
+                        <Menu size={24} className="text-cine-accent group-hover:scale-110 transition-transform" />
+                    </button>
+                    <button
+                        onClick={() => router.push('/')}
+                        className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-all border border-white/10"
+                    >
+                        <ArrowLeft size={20} className="text-white" />
+                    </button>
+                </div>
+            </header>
+
+            <main className="flex-1 pb-24 lg:pb-8 overflow-y-auto overflow-x-hidden relative z-10 pt-20 lg:pt-0">
                 <MobileNav />
 
                 {/* Cinematic Hero */}
@@ -234,17 +251,18 @@ export default function SubjectPage() {
                                         {missions.length} مهمة
                                     </span>
                                 </h2>
-                                <div className="grid grid-cols-1 gap-6">
+                                <div className="flex overflow-x-auto gap-6 pb-6 no-scrollbar snap-x snap-mandatory">
                                     {missions.map((m, i) => (
-                                        <MissionItem
-                                            key={m.id}
-                                            mission={m}
-                                            index={i}
-                                            completed={!!completedMissions[m.id]}
-                                            onToggle={() => handleToggleMission(m.id, m.title)}
-                                            onViewDetails={() => openMissionModal(m)}
-                                            accentColor={subject.theme.primary}
-                                        />
+                                        <div key={m.id} className="min-w-[300px] snap-center">
+                                            <MissionItem
+                                                mission={m}
+                                                index={i}
+                                                completed={!!completedMissions[m.id]}
+                                                onToggle={() => handleToggleMission(m.id, m.title)}
+                                                onViewDetails={() => openMissionModal(m)}
+                                                accentColor={subject.theme.primary}
+                                            />
+                                        </div>
                                     ))}
                                 </div>
                             </section>
