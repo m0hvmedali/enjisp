@@ -79,7 +79,7 @@ export default function SubjectPage() {
     const handleToggleMission = (missionId: string, missionTitle: string) => {
         toggleMission(missionId);
         if (!completedMissions[missionId]) {
-            toast.success(`عاش يا بطل: ${missionTitle}`, {
+            toast.success(`عاش يا هندسه: ${missionTitle}`, {
                 icon: '🔥',
                 style: {
                     borderRadius: '12px',

@@ -40,8 +40,8 @@ export default function MainApp() {
                         <Sparkles className="text-white w-10 h-10" />
                     </div>
 
-                    <h1 className="text-4xl font-black font-arabic text-white mb-4 tracking-tight">مرحباً بكِ في خطة العباقرة</h1>
-                    <p className="text-organic-beige font-arabic mb-12 text-lg opacity-80">نحن لا نخطط للدراسة.. نحن نخطط للمجد 👑</p>
+                    <h1 className="text-4xl font-black font-arabic text-white mb-4 tracking-tight">Welcome Eng.Enji</h1>
+                    <p className="text-organic-beige font-arabic mb-12 text-lg opacity-80">نحن لا نخطط للدراسة.. نحن نخطط للهندسه 👑</p>
 
                     <div className="grid grid-cols-2 gap-6">
                         <button
@@ -82,12 +82,12 @@ export default function MainApp() {
                     >
                         <Menu size={24} className="text-organic-green group-hover:scale-105 transition-transform" />
                     </button>
-                    <h2 className="text-xl font-black font-arabic text-white tracking-wide">إنجي هانم <span className="text-organic-green">.</span></h2>
+                    <h2 className="text-xl font-black font-arabic text-white tracking-wide">Enji <span className="text-organic-green">.</span></h2>
                 </div>
                 <div className="flex items-center gap-3">
                     <div className="px-4 py-2 bg-organic-green/10 rounded-full border border-organic-green/20 flex items-center gap-2">
                         <Sparkles size={16} className="text-organic-green" />
-                        <span className="text-xs font-bold text-organic-green">نسخة العباقرة</span>
+                        <span className="text-xs font-bold text-organic-green">Enji App</span>
                     </div>
                 </div>
             </header>

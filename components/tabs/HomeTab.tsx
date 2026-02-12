@@ -78,7 +78,7 @@ export default function HomeTab() {
                     <div className="relative z-20 p-8 flex flex-col justify-end h-full min-h-[200px]">
                         <div className="flex items-center gap-3 mb-4">
                             <span className="px-3 py-1 bg-organic-green text-organic-dark font-black text-[10px] rounded-full uppercase tracking-wider">
-                                مهمة اليوم
+                                Focus
                             </span>
                         </div>
                         <h2 className="text-3xl font-black font-arabic text-white mb-2">ابحثي في أسرار الكيمياء 🧪</h2>
@@ -116,7 +116,6 @@ export default function HomeTab() {
                                 src={subject.scheduleImage || 'https://images.unsplash.com/photo-1614728263952-84ea206f99b6?auto=format&fit=crop&q=80'}
                                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60"
                                 alt={subject.name}
-                                style={{ filter: 'grayscale(100%)' }}
                             />
 
                             {/* Organic Overlay */}

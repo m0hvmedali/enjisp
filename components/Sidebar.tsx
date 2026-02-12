@@ -47,7 +47,7 @@ export default function Sidebar() {
                 <div className="p-8 flex items-center justify-between border-b border-white/5">
                     <h1 className="text-2xl font-black font-arabic text-white italic tracking-tighter flex items-center gap-2">
                         <span className="w-3 h-3 bg-organic-green rounded-full animate-pulse"></span>
-                        خطة العباقرة
+                        Enji App
                     </h1>
                     <button
                         onClick={toggleSidebar}
