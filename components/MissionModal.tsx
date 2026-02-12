@@ -31,7 +31,7 @@ export default function MissionModal({
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/80 backdrop-blur-md z-50"
+                        className="fixed inset-0 bg-black/90 backdrop-blur-xl z-50"
                     />
 
                     {/* Modal */}
@@ -40,39 +40,43 @@ export default function MissionModal({
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-dark-card rounded-3xl border border-white/10 shadow-2xl"
+                            className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-organic-gray rounded-[2.5rem] border border-white/10 shadow-2xl"
                         >
+                            {/* Organic Background Blobs */}
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-organic-green/5 rounded-full blur-[80px]" />
+                            <div className="absolute bottom-0 left-0 w-64 h-64 bg-organic-pink/5 rounded-full blur-[80px]" />
+
                             {/* Close Button */}
                             <button
                                 onClick={onClose}
-                                className="absolute top-6 left-6 p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors z-10"
+                                className="absolute top-6 left-6 p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors z-10 border border-white/5"
                             >
                                 <X className="w-6 h-6 text-gray-400" />
                             </button>
 
                             {/* Header */}
-                            <div className="text-center p-8 border-b border-white/10">
-                                <div className="text-6xl mb-4">{subjectIcon}</div>
-                                <h2 className="text-3xl font-bold text-white mb-2 font-arabic">
+                            <div className="text-center p-8 border-b border-white/5 relative z-10">
+                                <div className="text-6xl mb-4 filter drop-shadow-lg">{subjectIcon}</div>
+                                <h2 className="text-3xl font-black text-white mb-2 font-arabic">
                                     {mission.title}
                                 </h2>
-                                <p className="text-gray-400 font-arabic">{subjectName}</p>
+                                <p className="text-organic-green font-arabic font-bold">{subjectName}</p>
                             </div>
 
                             {/* Body */}
-                            <div className="p-8 space-y-6">
+                            <div className="p-8 space-y-6 relative z-10">
                                 {/* What to Study */}
                                 <motion.div
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.1 }}
-                                    className="p-6 rounded-2xl bg-white/5 border border-white/10"
+                                    className="p-6 rounded-[2rem] bg-black/20 border border-white/5"
                                 >
-                                    <h3 className="text-xl font-bold text-accent-blue mb-3 font-arabic flex items-center gap-2">
-                                        <BookOpen className="w-5 h-5" />
-                                        ماذا سندرس؟
+                                    <h3 className="text-lg font-black text-organic-beige mb-3 font-arabic flex items-center gap-2">
+                                        <BookOpen className="w-5 h-5 text-organic-green" />
+                                        المحتوى
                                     </h3>
-                                    <p className="text-gray-300 font-arabic leading-relaxed">
+                                    <p className="text-gray-300 font-arabic leading-relaxed text-lg">
                                         {mission.content}
                                     </p>
                                 </motion.div>
@@ -83,11 +87,11 @@ export default function MissionModal({
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.2 }}
-                                        className="p-6 rounded-2xl bg-white/5 border border-white/10"
+                                        className="p-6 rounded-[2rem] bg-organic-green/5 border border-organic-green/10"
                                     >
-                                        <h3 className="text-xl font-bold text-accent-green mb-3 font-arabic flex items-center gap-2">
+                                        <h3 className="text-lg font-black text-organic-green mb-3 font-arabic flex items-center gap-2">
                                             <Brain className="w-5 h-5" />
-                                            الحالة النفسية المتوقعة
+                                            النتيجة المتوقعة
                                         </h3>
                                         <p className="text-gray-300 font-arabic leading-relaxed">
                                             {mission.outcome}
@@ -102,19 +106,23 @@ export default function MissionModal({
                                     transition={{ delay: 0.3 }}
                                     className="grid grid-cols-2 gap-4"
                                 >
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center gap-3">
-                                        <Clock className="w-5 h-5 text-accent-blue" />
+                                    <div className="p-5 rounded-[1.5rem] bg-white/5 border border-white/5 flex items-center gap-4">
+                                        <div className="p-3 bg-organic-dark rounded-full">
+                                            <Clock className="w-5 h-5 text-organic-beige" />
+                                        </div>
                                         <div>
-                                            <p className="text-xs text-gray-400 font-arabic">الوقت</p>
-                                            <p className="text-white font-bold font-english">{mission.duration}</p>
+                                            <p className="text-[10px] text-gray-500 font-bold font-arabic uppercase tracking-wider">الوقت</p>
+                                            <p className="text-white font-black font-english text-lg">{mission.duration}</p>
                                         </div>
                                     </div>
                                     {mission.method && (
-                                        <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center gap-3">
-                                            <BookOpen className="w-5 h-5 text-accent-purple" />
+                                        <div className="p-5 rounded-[1.5rem] bg-white/5 border border-white/5 flex items-center gap-4">
+                                            <div className="p-3 bg-organic-dark rounded-full">
+                                                <BookOpen className="w-5 h-5 text-organic-pink" />
+                                            </div>
                                             <div>
-                                                <p className="text-xs text-gray-400 font-arabic">الطريقة</p>
-                                                <p className="text-white font-semibold font-arabic text-sm">
+                                                <p className="text-[10px] text-gray-500 font-bold font-arabic uppercase tracking-wider">الطريقة</p>
+                                                <p className="text-white font-bold font-arabic text-sm">
                                                     {mission.method}
                                                 </p>
                                             </div>
@@ -127,20 +135,24 @@ export default function MissionModal({
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.4 }}
-                                    className="space-y-3"
+                                    className="space-y-3 pt-4"
                                 >
                                     <a
                                         href={mission.links?.notebook || '#'}
-                                        className="flex items-center justify-center gap-3 p-4 rounded-xl bg-purple-600 hover:bg-purple-700 transition-colors text-white font-bold font-arabic"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center justify-center gap-3 p-4 rounded-2xl bg-organic-green hover:bg-organic-green/90 text-organic-dark font-black font-arabic transition-all hover:scale-[1.02] shadow-lg shadow-organic-green/20"
                                     >
                                         <Video className="w-5 h-5" />
-                                        Note (NotebookLM)
+                                        الشرح (NotebookLM)
                                     </a>
                                     <a
                                         href={mission.links?.questions || '#'}
-                                        className="flex items-center justify-center gap-3 p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-white font-bold font-arabic"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center justify-center gap-3 p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 text-white font-bold font-arabic transition-all hover:scale-[1.02]"
                                     >
-                                        <HelpCircle className="w-5 h-5" />
+                                        <HelpCircle className="w-5 h-5 text-gray-400" />
                                         أسئلة السنين السابقة
                                     </a>
                                 </motion.div>

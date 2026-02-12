@@ -22,7 +22,7 @@ export default function MobileNav({ activeTab = '', setActiveTab = () => { } }: 
 
     return (
         <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-lg z-50">
-            <div className="bg-dark-card/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-2 shadow-2xl flex items-center justify-between">
+            <div className="bg-organic-gray/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-2 shadow-2xl flex items-center justify-between shadow-black/50">
                 {tabs.map((tab) => {
                     const Icon = tab.icon;
                     const isActive = activeTab === tab.id;
@@ -31,37 +31,44 @@ export default function MobileNav({ activeTab = '', setActiveTab = () => { } }: 
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className="relative flex-1 flex flex-col items-center py-2 transition-all duration-300"
+                            className="relative flex-1 flex flex-col items-center py-2 transition-all duration-300 bg-transparent border-none"
                         >
                             <motion.div
                                 animate={{
-                                    scale: isActive ? 1.2 : 1,
-                                    color: isActive ? ['#3b82f6', '#9333ea', '#3b82f6'] : '#64748b'
+                                    scale: isActive ? 1.1 : 1,
+                                    color: isActive ? '#00C853' : '#6b7280',
+                                    y: isActive ? -5 : 0
                                 }}
-                                transition={isActive ? { duration: 4, repeat: Infinity } : { duration: 0.3 }}
-                                className="z-10"
+                                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                                className="z-10 relative"
                             >
-                                <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
+                                <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="glow"
+                                        className="absolute inset-0 bg-organic-green blur-lg opacity-40"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 0.4 }}
+                                        exit={{ opacity: 0 }}
+                                    />
+                                )}
                             </motion.div>
 
                             <motion.span
                                 animate={{
                                     opacity: isActive ? 1 : 0,
-                                    y: isActive ? 0 : 5
+                                    height: isActive ? 'auto' : 0,
+                                    marginTop: isActive ? 4 : 0
                                 }}
-                                className="text-[10px] font-arabic font-bold mt-1 text-accent-blue"
+                                className="text-[10px] font-arabic font-bold text-organic-beige overflow-hidden"
                             >
                                 {tab.label}
                             </motion.span>
 
                             {isActive && (
                                 <motion.div
-                                    layoutId="activeTab"
-                                    className="absolute inset-0 bg-accent-blue/10 rounded-2xl mx-1"
-                                    animate={{
-                                        backgroundColor: ['rgba(59, 130, 246, 0.1)', 'rgba(147, 51, 234, 0.1)', 'rgba(59, 130, 246, 0.1)']
-                                    }}
-                                    transition={{ duration: 4, repeat: Infinity }}
+                                    layoutId="activeTabIndicator"
+                                    className="absolute -bottom-1 w-1 h-1 bg-organic-green rounded-full"
                                 />
                             )}
                         </button>

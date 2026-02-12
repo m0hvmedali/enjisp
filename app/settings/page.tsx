@@ -18,38 +18,43 @@ export default function SettingsPage() {
     const handleUpdateMission = (missionId: string, field: string, value: any) => {
         if (!selectedSubjectId) return;
         updateMission(selectedSubjectId, missionId, { [field]: value });
-        toast.success('تم الحفظ مؤقتاً 💾', { id: missionId });
+        toast.success('تم الحفظ 💾', { id: missionId, style: { background: '#121212', color: '#fff', border: '1px solid #00C853' } });
     };
 
     return (
-        <div className="flex min-h-screen bg-dark-bg">
+        <div className="flex min-h-screen bg-organic-dark selection:bg-organic-green selection:text-organic-dark">
             <Sidebar />
 
             <main className="flex-1 pb-24 lg:pb-8 overflow-y-auto">
                 <MobileNav />
 
                 <div className="max-w-6xl mx-auto p-4 lg:p-8">
-                    <header className="mb-12 flex flex-col md:flex-row justify-between items-start gap-4">
+                    <header className="mb-12 flex flex-col md:flex-row justify-between items-start gap-6">
                         <div>
-                            <h1 className="text-4xl font-black font-arabic mb-2">لوحة التحكم السحرية ✨</h1>
-                            <p className="text-gray-400 font-arabic italic text-lg">"عدل على خطتك كما تشاء، لأنك أنت القائد."</p>
+                            <h1 className="text-4xl font-black font-arabic mb-2 text-white flex items-center gap-3">
+                                <span className="text-organic-green">✨</span> لوحة التحكم
+                            </h1>
+                            <p className="text-gray-400 font-arabic text-lg">تحكم في خطتك، ومزامنة بياناتك.</p>
                         </div>
-                        <CloudSyncControls />
+                        <div className="w-full md:w-auto">
+                            <CloudSyncControls />
+                        </div>
                     </header>
 
                     {/* Subject Tabs */}
-                    <div className="flex gap-2 overflow-x-auto pb-4 mb-8 no-scrollbar">
+                    <div className="flex gap-3 overflow-x-auto pb-6 mb-8 no-scrollbar snap-x">
                         {studyPlan.map((s) => (
                             <button
                                 key={s.id}
                                 onClick={() => setSelectedSubjectId(s.id)}
-                                className={`flex items-center gap-2 px-6 py-3 rounded-2xl whitespace-nowrap transition-all duration-300 border ${selectedSubjectId === s.id
-                                    ? 'bg-accent-blue border-accent-blue text-white shadow-xl scale-105'
-                                    : 'bg-dark-card border-white/5 text-gray-400 hover:border-white/20'
+                                className={`flex items-center gap-3 px-6 py-4 rounded-[2rem] whitespace-nowrap transition-all duration-300 border snap-center
+                                    ${selectedSubjectId === s.id
+                                        ? 'bg-organic-green text-organic-dark font-black shadow-lg shadow-organic-green/20 scale-105'
+                                        : 'bg-organic-gray border-white/5 text-gray-500 hover:bg-white/5 hover:border-white/10'
                                     }`}
                             >
-                                <span className="text-xl">{s.icon}</span>
-                                <span className="font-arabic font-bold">{s.name}</span>
+                                <span className="text-2xl filter drop-shadow-md">{s.icon}</span>
+                                <span className="font-arabic text-sm">{s.name}</span>
                             </button>
                         ))}
                     </div>
@@ -61,30 +66,45 @@ export default function SettingsPage() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
-                                className="space-y-6"
+                                className="space-y-8"
                             >
                                 {/* Subject Settings */}
-                                <div className="bg-dark-card/50 p-6 rounded-3xl border border-white/10">
-                                    <h2 className="text-xl font-bold mb-4 font-arabic text-accent-blue">إعدادات المادة العامة</h2>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <input
-                                            className="bg-dark-bg border border-white/10 rounded-xl p-3 font-arabic"
-                                            value={selectedSubject.theme.scientist}
-                                            onChange={(e) => updateSubject(selectedSubject.id, { theme: { ...selectedSubject.theme, scientist: e.target.value } })}
-                                            placeholder="اسم العالم الملهم..."
-                                        />
-                                        <input
-                                            className="bg-dark-bg border border-white/10 rounded-xl p-3 font-arabic"
-                                            value={selectedSubject.lessonDay || ''}
-                                            onChange={(e) => updateSubject(selectedSubject.id, { lessonDay: e.target.value })}
-                                            placeholder="يوم الدرس..."
-                                        />
+                                <div className="bg-organic-gray p-8 rounded-[2.5rem] border border-white/5 relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-organic-green/5 rounded-full blur-[50px]" />
+                                    <h2 className="text-xl font-black mb-6 font-arabic text-white flex items-center gap-2">
+                                        <Edit3 size={20} className="text-organic-green" />
+                                        إعدادات المادة
+                                    </h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-gray-500 font-arabic pr-2">اسم العالم / اللقب</label>
+                                            <input
+                                                className="w-full bg-black/20 border border-white/5 rounded-2xl p-4 font-arabic text-white focus:border-organic-green/50 outline-none transition-all placeholder-gray-700"
+                                                value={selectedSubject.theme.scientist}
+                                                onChange={(e) => updateSubject(selectedSubject.id, { theme: { ...selectedSubject.theme, scientist: e.target.value } })}
+                                                placeholder="مثال: نيوتن، زويل..."
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-gray-500 font-arabic pr-2">يوم الدرس</label>
+                                            <input
+                                                className="w-full bg-black/20 border border-white/5 rounded-2xl p-4 font-arabic text-white focus:border-organic-green/50 outline-none transition-all placeholder-gray-700"
+                                                value={selectedSubject.lessonDay || ''}
+                                                onChange={(e) => updateSubject(selectedSubject.id, { lessonDay: e.target.value })}
+                                                placeholder="مثال: السبت"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
 
                                 {/* Missions List */}
-                                <div className="space-y-4">
-                                    <h2 className="text-xl font-bold mb-4 font-arabic">إدارة المهام</h2>
+                                <div className="space-y-6">
+                                    <div className="flex items-center justify-between px-2">
+                                        <h2 className="text-xl font-black font-arabic text-white">إدارة المهام</h2>
+                                        <div className="px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-gray-500">
+                                            {selectedSubject.missions?.length || 0} مهمة
+                                        </div>
+                                    </div>
 
                                     {/* Subject Missions */}
                                     {selectedSubject.missions?.map((m) => (
@@ -97,8 +117,11 @@ export default function SettingsPage() {
 
                                     {/* Units Missions */}
                                     {selectedSubject.units?.map((unit) => (
-                                        <div key={unit.name} className="space-y-4 pt-6">
-                                            <h3 className="text-lg font-bold font-arabic text-gray-500 border-r-4 border-accent-purple pr-4">{unit.name}</h3>
+                                        <div key={unit.name} className="space-y-4 pt-4">
+                                            <div className="flex items-center gap-4">
+                                                <h3 className="text-lg font-black font-arabic text-organic-beige">{unit.name}</h3>
+                                                <div className="h-px bg-white/5 flex-1" />
+                                            </div>
                                             {unit.missions.map((m) => (
                                                 <MissionEditRow
                                                     key={m.id}
@@ -111,8 +134,11 @@ export default function SettingsPage() {
 
                                     {/* Sections Missions */}
                                     {selectedSubject.sections?.map((section) => (
-                                        <div key={section.name} className="space-y-4 pt-6">
-                                            <h3 className="text-lg font-bold font-arabic text-gray-500 border-r-4 border-accent-gold pr-4">{section.name}</h3>
+                                        <div key={section.name} className="space-y-4 pt-4">
+                                            <div className="flex items-center gap-4">
+                                                <h3 className="text-lg font-black font-arabic text-organic-beige">{section.name}</h3>
+                                                <div className="h-px bg-white/5 flex-1" />
+                                            </div>
                                             {section.missions.map((m) => (
                                                 <MissionEditRow
                                                     key={m.id}
@@ -138,64 +164,64 @@ function MissionEditRow({ mission, onUpdate }: { mission: any, onUpdate: (f: str
     const [isExpanded, setIsExpanded] = useState(false);
 
     return (
-        <div className="bg-dark-card border border-white/5 rounded-2xl overflow-hidden transition-all duration-300 hover:border-white/20">
-            <div className="flex items-center gap-4 p-4">
+        <div className="bg-organic-gray border border-white/5 rounded-[1.5rem] overflow-hidden transition-all duration-300 hover:border-organic-green/30 group">
+            <div className="flex items-center gap-4 p-5">
                 <div className="flex-1">
                     <input
-                        className="w-full bg-transparent border-none text-lg font-bold font-arabic outline-none focus:text-accent-blue transition-colors"
+                        className="w-full bg-transparent border-none text-base font-bold font-arabic outline-none text-gray-200 focus:text-organic-green transition-colors placeholder-gray-700"
                         value={mission.title}
                         onChange={(e) => onUpdate('title', e.target.value)}
+                        placeholder="عنوان المهمة..."
                     />
                 </div>
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="p-2 hover:bg-white/10 rounded-lg text-gray-500"
+                        className={`p-2 rounded-xl transition-all ${isExpanded ? 'bg-organic-green text-organic-dark' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
                     >
-                        {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                        {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                     </button>
-                    <button className="p-2 hover:bg-red-500/20 text-red-500 rounded-lg">
-                        <Trash2 size={20} />
-                    </button>
+                    {/* Add delete button functionality if needed */}
                 </div>
             </div>
 
             <AnimatePresence>
                 {isExpanded && (
                     <motion.div
-                        initial={{ height: 0 }}
-                        animate={{ height: 'auto' }}
-                        exit={{ height: 0 }}
-                        className="border-t border-white/5 bg-black/20 p-4 space-y-4"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="border-t border-white/5 bg-black/20 p-6 space-y-6"
                     >
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <label className="text-xs text-gray-500 font-arabic">محتوى المهمة</label>
+                                <label className="text-[10px] text-gray-500 font-bold font-arabic uppercase tracking-wider">محتوى المهمة</label>
                                 <textarea
-                                    className="w-full bg-dark-bg border border-white/10 rounded-xl p-3 font-arabic text-sm h-24"
+                                    className="w-full bg-organic-dark border border-white/5 rounded-2xl p-4 font-arabic text-sm h-32 focus:border-organic-green/50 outline-none transition-all text-gray-300 resize-none"
                                     value={mission.content}
                                     onChange={(e) => onUpdate('content', e.target.value)}
+                                    placeholder="وصف تفصيلي للمهمة..."
                                 />
                             </div>
                             <div className="space-y-4">
                                 <div className="space-y-2">
-                                    <label className="text-xs text-gray-500 font-arabic">رابط NotebookLM</label>
+                                    <label className="text-[10px] text-gray-500 font-bold font-arabic uppercase tracking-wider">رابط الشرح (NotebookLM)</label>
                                     <div className="flex gap-2">
-                                        <div className="p-3 bg-dark-bg border border-white/10 rounded-xl text-gray-500"><LinkIcon size={16} /></div>
+                                        <div className="p-3 bg-organic-dark border border-white/5 rounded-2xl text-gray-500"><LinkIcon size={16} /></div>
                                         <input
-                                            className="flex-1 bg-dark-bg border border-white/10 rounded-xl p-3 text-sm"
+                                            className="flex-1 bg-organic-dark border border-white/5 rounded-2xl p-3 text-sm focus:border-organic-green/50 outline-none transition-all text-gray-300 font-english"
                                             value={mission.links?.notebook || ''}
                                             onChange={(e) => onUpdate('links', { ...mission.links, notebook: e.target.value })}
-                                            placeholder="https://..."
+                                            placeholder="https://notebooklm.google..."
                                         />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs text-gray-500 font-arabic">رابط الأسئلة</label>
+                                    <label className="text-[10px] text-gray-500 font-bold font-arabic uppercase tracking-wider">رابط الأسئلة</label>
                                     <div className="flex gap-2">
-                                        <div className="p-3 bg-dark-bg border border-white/10 rounded-xl text-gray-500"><LinkIcon size={16} /></div>
+                                        <div className="p-3 bg-organic-dark border border-white/5 rounded-2xl text-gray-500"><LinkIcon size={16} /></div>
                                         <input
-                                            className="flex-1 bg-dark-bg border border-white/10 rounded-xl p-3 text-sm"
+                                            className="flex-1 bg-organic-dark border border-white/5 rounded-2xl p-3 text-sm focus:border-organic-green/50 outline-none transition-all text-gray-300 font-english"
                                             value={mission.links?.questions || ''}
                                             onChange={(e) => onUpdate('links', { ...mission.links, questions: e.target.value })}
                                             placeholder="https://..."
@@ -204,21 +230,22 @@ function MissionEditRow({ mission, onUpdate }: { mission: any, onUpdate: (f: str
                                 </div>
                             </div>
                         </div>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2 border-t border-white/5">
                             <div className="space-y-1">
-                                <label className="text-[10px] text-gray-500 font-arabic">المدة</label>
+                                <label className="text-[10px] text-gray-500 font-bold font-arabic">المدة (دقيقة)</label>
                                 <input
-                                    className="w-full bg-dark-bg border border-white/10 rounded-lg p-2 text-xs"
+                                    className="w-full bg-organic-dark border border-white/5 rounded-xl p-3 text-sm font-english focus:border-organic-green/50 outline-none transition-all text-white text-center"
                                     value={mission.duration}
                                     onChange={(e) => onUpdate('duration', e.target.value)}
                                 />
                             </div>
                             <div className="space-y-1">
-                                <label className="text-[10px] text-gray-500 font-arabic">الطريقة</label>
+                                <label className="text-[10px] text-gray-500 font-bold font-arabic">النوع</label>
                                 <input
-                                    className="w-full bg-dark-bg border border-white/10 rounded-lg p-2 text-xs font-arabic"
+                                    className="w-full bg-organic-dark border border-white/5 rounded-xl p-3 text-sm font-arabic focus:border-organic-green/50 outline-none transition-all text-white text-center"
                                     value={mission.method}
                                     onChange={(e) => onUpdate('method', e.target.value)}
+                                    placeholder="مذاكرة / فيديو"
                                 />
                             </div>
                         </div>
