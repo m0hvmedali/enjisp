@@ -1,15 +1,14 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { LucideIcon } from 'lucide-react';
-import { ReactNode } from 'react';
+import { ArrowLeft, Clock, BookOpen, Sparkles } from 'lucide-react';
 
 interface SubjectCardProps {
     icon: string;
     name: string;
-    lessonInfo: string;
     progress: number;
-    hasLessonToday: boolean;
+    lessonInfo: string;
+    hasLessonToday?: boolean;
     gradient: string;
     onClick: () => void;
     completedCount: number;
@@ -19,76 +18,87 @@ interface SubjectCardProps {
 export default function SubjectCard({
     icon,
     name,
-    lessonInfo,
     progress,
+    lessonInfo,
     hasLessonToday,
     gradient,
     onClick,
     completedCount,
-    totalCount,
+    totalCount
 }: SubjectCardProps) {
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            whileHover={{ scale: 1.03, y: -8 }}
+            whileHover={{ y: -5 }}
             whileTap={{ scale: 0.98 }}
             onClick={onClick}
             className={`
-        relative cursor-pointer rounded-3xl p-6 backdrop-blur-xl
-        bg-gradient-to-br ${gradient} bg-opacity-50
+        relative cursor-pointer rounded-[2rem] p-6 lg:p-8 backdrop-blur-3xl
+        bg-gradient-to-br ${gradient} bg-opacity-30
         border border-white/10 transition-all duration-500
-        hover:shadow-2xl hover:shadow-accent-blue/20
-        ${hasLessonToday ? 'ring-2 ring-accent-blue shadow-lg shadow-accent-blue/30' : ''}
+        hover:shadow-3xl hover:shadow-white/5
+        ${hasLessonToday ? 'ring-4 ring-accent-blue/50 shadow-2xl shadow-accent-blue/20' : ''}
         overflow-hidden group
       `}
         >
+            {/* Dynamic Background Shapes */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-white/10 transition-colors" />
+
             {/* Lesson Badge */}
             {hasLessonToday && (
                 <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute top-4 left-4 bg-accent-blue px-3 py-1 rounded-full text-xs font-bold text-white z-10"
+                    initial={{ x: 20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    className="absolute top-4 left-4 bg-accent-blue/90 text-white px-4 py-1.5 rounded-full text-xs font-black z-10 font-arabic shadow-xl shadow-accent-blue/20 backdrop-blur-md"
                 >
                     درس اليوم 🏫
                 </motion.div>
             )}
 
-            {/* Glow Effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
             {/* Content */}
-            <div className="relative z-10">
-                <div className="text-6xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
-                    {icon}
+            <div className="relative z-10 flex flex-col h-full">
+                <div className="flex justify-between items-start mb-6">
+                    <div className="text-6xl drop-shadow-xl group-hover:scale-110 transition-transform duration-500">
+                        {icon}
+                    </div>
+                    <div className="flex flex-col items-end">
+                        <span className="text-3xl font-black font-english tracking-tighter">
+                            {Math.round(progress)}%
+                        </span>
+                        <span className="text-[10px] text-gray-400 font-arabic font-bold uppercase tracking-wider">التقدم الكلي</span>
+                    </div>
                 </div>
 
-                <h3 className="text-2xl font-bold mb-2 text-white font-arabic">
-                    {name}
-                </h3>
-
-                <p className="text-sm text-gray-400 mb-4 font-arabic">
-                    {lessonInfo}
-                </p>
-
-                {/* Progress Bar */}
-                <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden mb-3">
-                    <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${progress}%` }}
-                        transition={{ duration: 1, ease: 'easeOut' }}
-                        className="h-full bg-gradient-to-r from-accent-blue to-accent-purple"
-                    />
+                <div className="mb-8">
+                    <h3 className="text-2xl lg:text-3xl font-black mb-2 font-arabic group-hover:text-white transition-colors">
+                        {name}
+                    </h3>
+                    <div className="flex items-center gap-2 text-gray-400 text-xs font-bold font-arabic">
+                        <Clock size={14} className="text-accent-blue" />
+                        <span>{lessonInfo}</span>
+                    </div>
                 </div>
 
-                {/* Stats */}
-                <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-400 font-english">
-                        إنجاز: {Math.round(progress)}%
-                    </span>
-                    <span className="text-accent-blue font-bold font-english">
-                        {completedCount}/{totalCount}
-                    </span>
+                {/* Progress Bar Container */}
+                <div className="mt-auto">
+                    <div className="flex justify-between items-center mb-3 text-[10px] font-black font-arabic text-gray-500 tracking-widest">
+                        <span>{completedCount} من {totalCount} مهام</span>
+                        <span>{Math.round(progress)}%</span>
+                    </div>
+                    <div className="relative h-2 w-full bg-black/20 rounded-full overflow-hidden border border-white/5">
+                        <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${progress}%` }}
+                            transition={{ duration: 1, ease: 'easeOut' }}
+                            className={`absolute top-0 left-0 h-full bg-gradient-to-r from-white/40 to-white rounded-full shadow-[0_0_15px_rgba(255,255,255,0.5)]`}
+                        />
+                    </div>
+                </div>
+
+                {/* Hover Arrow */}
+                <div className="absolute bottom-6 left-6 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 text-white">
+                    <ArrowLeft size={24} />
                 </div>
             </div>
         </motion.div>
