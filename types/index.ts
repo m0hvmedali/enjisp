@@ -36,6 +36,7 @@ export interface Subject {
     missions?: Mission[];
     units?: Unit[];
     sections?: Section[];
+    scheduleImage?: string;
 }
 
 export interface StudyPlan {

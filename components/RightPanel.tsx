@@ -20,9 +20,9 @@ const moodEmojis = ['😊', '😐', '🤯'];
 export default function RightPanel() {
     return (
         <motion.aside
-            initial={{ x: -50 }}
-            animate={{ x: 0 }}
-            className="w-80 h-screen bg-dark-card border-r border-white/10 p-6 flex flex-col gap-6 backdrop-blur-xl sticky top-0 overflow-y-auto"
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            className="hidden lg:flex w-80 h-screen bg-dark-card border-r border-white/10 p-6 flex-col gap-6 backdrop-blur-xl sticky top-0 overflow-y-auto"
         >
             {/* Philosophy Card */}
             <motion.div

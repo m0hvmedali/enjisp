@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { useStudyStore } from '@/store/useStudyStore';
 import { philosophy } from '@/data/studyData';
 import SubjectCard from '@/components/SubjectCard';
@@ -13,13 +14,21 @@ import { Bell, Search, Sparkles } from 'lucide-react';
 export default function HomePage() {
     const router = useRouter();
     const { studyPlan, completedMissions } = useStudyStore();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const getTodayName = () => {
+        if (!mounted) return '';
         const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
         return days[new Date().getDay()];
     };
 
     const todayName = getTodayName();
+
+    if (!mounted) return <div className="min-h-screen bg-dark-bg" />;
 
     const getAllMissionIds = (subject: any) => {
         const ids: string[] = [];

@@ -5,6 +5,7 @@ export const studyData: Subject[] = [
         id: 'english',
         name: 'إنجليزي',
         icon: '📚',
+        scheduleImage: '/images/subjects/english-schedule.png',
         theme: {
             primary: '#10b981',
             gradient: 'from-emerald-900 via-slate-900 to-slate-950',
@@ -68,6 +69,7 @@ export const studyData: Subject[] = [
         id: 'arabic',
         name: 'عربي (نحو)',
         icon: '✒️',
+        scheduleImage: '/images/subjects/arabic-schedule.png',
         theme: {
             primary: '#f59e0b',
             gradient: 'from-amber-900 via-slate-900 to-slate-950',
@@ -116,6 +118,7 @@ export const studyData: Subject[] = [
         id: 'chemistry',
         name: 'كيمياء',
         icon: '🧪',
+        scheduleImage: '/images/subjects/chemistry-schedule.png',
         theme: {
             primary: '#3b82f6',
             gradient: 'from-blue-900 via-slate-900 to-slate-950',
@@ -137,6 +140,7 @@ export const studyData: Subject[] = [
         id: 'physics',
         name: 'فيزياء',
         icon: '⚡',
+        scheduleImage: '/images/subjects/physics-schedule.png',
         theme: {
             primary: '#ec4899',
             gradient: 'from-pink-900 via-slate-900 to-slate-950',
@@ -169,6 +173,7 @@ export const studyData: Subject[] = [
         id: 'math',
         name: 'رياضيات (تفاضل)',
         icon: '📐',
+        scheduleImage: '/images/subjects/math-schedule.png',
         theme: {
             primary: '#a855f7',
             gradient: 'from-purple-900 via-slate-900 to-slate-950',

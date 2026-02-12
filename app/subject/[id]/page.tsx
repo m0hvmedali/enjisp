@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useStudyStore } from '@/store/useStudyStore';
 import Sidebar from '@/components/Sidebar';
 import RightPanel from '@/components/RightPanel';
@@ -18,12 +18,19 @@ export default function SubjectPage() {
     const router = useRouter();
     const subjectId = params?.id as string;
     const { studyPlan, completedMissions, toggleMission } = useStudyStore();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const subject = useMemo(() => studyPlan.find(s => s.id === subjectId), [studyPlan, subjectId]);
 
     const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+
+    if (!mounted) return <div className="min-h-screen bg-dark-bg" />;
 
     if (!subject) {
         return (
@@ -128,6 +135,34 @@ export default function SubjectPage() {
                             </div>
                         </div>
                     </motion.div>
+
+                    {/* Schedule Image Section */}
+                    {subject.scheduleImage && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mb-16"
+                        >
+                            <h2 className="text-2xl font-black font-arabic mb-6 flex items-center gap-3">
+                                <span className="p-2 bg-accent-gold/20 rounded-xl text-accent-gold">🗺️</span>
+                                <span>المخطط الذهبي للمادة</span>
+                            </h2>
+                            <div className="relative group rounded-[2.5rem] overflow-hidden border border-white/10 bg-dark-card shadow-2xl">
+                                <img
+                                    src={subject.scheduleImage}
+                                    alt="مخطط المادة"
+                                    className="w-full h-auto object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500 cursor-zoom-in"
+                                    onClick={() => window.open(subject.scheduleImage, '_blank')}
+                                    onError={(e) => {
+                                        (e.target as HTMLImageElement).style.display = 'none';
+                                    }}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-dark-bg/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-8 pointer-events-none">
+                                    <p className="text-white font-arabic font-bold">إضغط لمشاهدة المخطط بالحجم الكامل 🔍</p>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
 
                     {/* Content Structure */}
                     <div className="space-y-12">
