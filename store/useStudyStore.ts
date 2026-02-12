@@ -77,7 +77,7 @@ export const useStudyStore = create<StudyState>()(
                         newTimeline.unshift({
                             id: Math.random().toString(36).substr(2, 9),
                             title: `أكملت مهمة دراسية بنجاح! 🎉`,
-                            type: 'mission',
+                            type: 'mission' as const,
                             createdAt: new Date().toISOString()
                         });
                     }
@@ -111,7 +111,7 @@ export const useStudyStore = create<StudyState>()(
                         ...state.ventLogs
                     ],
                     timeline: [
-                        { id: Math.random().toString(36).substr(2, 9), title: `فرغت عما بداخلي.. أشعر بـ ${mood}`, type: 'vent', createdAt: new Date().toISOString() },
+                        { id: Math.random().toString(36).substr(2, 9), title: `فرغت عما بداخلي.. أشعر بـ ${mood}`, type: 'vent' as const, createdAt: new Date().toISOString() },
                         ...state.timeline
                     ].slice(0, 50)
                 }));
