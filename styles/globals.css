@@ -51,7 +51,7 @@ body {
     }
 
     body {
-        @apply bg-dark-bg text-white;
+        @apply bg-organic-dark text-organic-beige selection:bg-organic-green selection:text-organic-dark;
     }
 }
 

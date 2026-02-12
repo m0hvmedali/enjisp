@@ -22,32 +22,36 @@ export default function RightPanel() {
         <motion.aside
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            className="hidden lg:flex w-80 h-screen bg-dark-card border-r border-white/10 p-6 flex-col gap-6 backdrop-blur-xl sticky top-0 overflow-y-auto"
+            className="hidden lg:flex w-80 h-screen bg-organic-dark/50 border-r border-white/5 p-6 flex-col gap-6 backdrop-blur-md sticky top-0 overflow-y-auto z-30"
         >
             {/* Philosophy Card */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-6 rounded-2xl bg-gradient-to-br from-dark-lighter to-transparent border border-white/10"
+                className="p-6 rounded-[2rem] bg-organic-gray border border-white/5 relative overflow-hidden group"
             >
-                <div className="flex items-center gap-2 mb-4">
-                    <Brain className="w-5 h-5 text-accent-blue" />
-                    <h3 className="text-lg font-bold text-white font-arabic">فلسفة الخطة 🧠</h3>
+                <div className="absolute -right-10 -top-10 w-24 h-24 bg-organic-green/5 rounded-full blur-2xl group-hover:bg-organic-green/10 transition-colors" />
+
+                <div className="flex items-center gap-3 mb-4 relative z-10">
+                    <div className="p-2 bg-organic-green/10 rounded-xl text-organic-green">
+                        <Brain className="w-5 h-5" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white font-arabic">فلسفة الخطة</h3>
                 </div>
-                <p className="text-sm text-gray-400 font-arabic leading-relaxed">
+                <p className="text-sm text-gray-400 font-arabic leading-relaxed relative z-10">
                     "مش ضغط، كل مهمة قصيرة. نفسيتك أولوية."
                 </p>
 
                 {/* Mood Tracker */}
-                <div className="mt-6">
-                    <p className="text-sm text-gray-400 mb-3 font-arabic">حالتك دلوقتي؟</p>
-                    <div className="flex gap-3">
+                <div className="mt-6 relative z-10">
+                    <p className="text-[10px] text-gray-500 mb-3 font-arabic uppercase tracking-wider font-bold">حالتك دلوقتي؟</p>
+                    <div className="flex gap-2">
                         {moodEmojis.map((emoji, i) => (
                             <motion.button
                                 key={i}
-                                whileHover={{ scale: 1.1 }}
+                                whileHover={{ scale: 1.1, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="flex-1 p-3 rounded-xl bg-white/5 hover:bg-accent-blue/20 border border-white/10 transition-all text-2xl"
+                                className="flex-1 p-2 rounded-xl bg-white/5 hover:bg-organic-green/20 hover:border-organic-green/30 border border-white/5 transition-all text-xl grayscale hover:grayscale-0"
                             >
                                 {emoji}
                             </motion.button>
@@ -61,29 +65,28 @@ export default function RightPanel() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="p-6 rounded-2xl bg-gradient-to-br from-dark-lighter to-transparent border border-white/10"
+                className="p-6 rounded-[2rem] bg-organic-gray border border-white/5"
             >
-                <div className="flex items-center gap-2 mb-4">
-                    <Calendar className="w-5 h-5 text-accent-purple" />
-                    <h3 className="text-lg font-bold text-white font-arabic">مواعيد الدروس 📅</h3>
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 bg-organic-pink/10 rounded-xl text-organic-pink">
+                        <Calendar className="w-5 h-5" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white font-arabic">مواعيد الدروس</h3>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-3">
                     {lessons.map((lesson, i) => (
-                        <motion.div
+                        <div
                             key={i}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.1 + i * 0.05 }}
-                            className="flex justify-between items-center p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
+                            className="flex justify-between items-center p-3 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors border border-transparent hover:border-white/5 cursor-default group"
                         >
-                            <span className="text-accent-blue font-bold font-arabic text-sm">
+                            <span className="text-organic-green font-bold font-arabic text-sm group-hover:text-white transition-colors">
                                 {lesson.day}
                             </span>
-                            <span className="text-gray-300 font-arabic text-sm">
+                            <span className="text-gray-400 font-arabic text-xs group-hover:text-organic-beige transition-colors">
                                 {lesson.subject}
                             </span>
-                        </motion.div>
+                        </div>
                     ))}
                 </div>
             </motion.div>
@@ -93,9 +96,10 @@ export default function RightPanel() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="p-6 rounded-2xl bg-gradient-to-br from-purple-900/20 to-transparent border border-purple-500/20"
+                className="p-6 rounded-[2rem] bg-gradient-to-br from-organic-dark to-organic-gray border border-white/5 relative overflow-hidden"
             >
-                <p className="text-sm text-purple-300 font-arabic text-center italic leading-relaxed">
+                <div className="absolute inset-0 bg-organic-green/5 opacity-50" />
+                <p className="text-sm text-organic-beige font-arabic text-center italic leading-relaxed relative z-10 opacity-80">
                     "اليوم الناجح = 60-70% من الخطة"
                 </p>
             </motion.div>

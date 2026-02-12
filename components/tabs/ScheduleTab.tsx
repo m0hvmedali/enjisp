@@ -21,13 +21,15 @@ export default function ScheduleTab() {
         <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="p-6 max-w-4xl mx-auto selection:bg-cine-accent selection:text-cine-dark"
+            className="p-6 max-w-5xl mx-auto selection:bg-organic-green selection:text-organic-dark"
         >
-            <h1 className="text-4xl font-black font-arabic mb-12 text-center bg-gradient-to-r from-cine-accent via-cine-blue to-accent-purple bg-clip-text text-transparent italic tracking-tighter">
-                جدول المعارك الدراسية ⚔️
+            <h1 className="text-4xl font-black font-arabic mb-12 text-center text-white italic tracking-tighter flex items-center justify-center gap-4">
+                <span className="w-3 h-3 bg-organic-green rounded-full animate-pulse" />
+                جدول المعارك الدراسية
+                <span className="w-3 h-3 bg-organic-green rounded-full animate-pulse" />
             </h1>
 
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {days.map((day, idx) => {
                     const subject = studyPlan.find(s => s.id === day.subjectId);
 
@@ -36,40 +38,53 @@ export default function ScheduleTab() {
                             key={day.eng}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            whileHover={{ scale: 1.03, rotate: 0.5 }}
+                            whileHover={{ y: -5 }}
                             transition={{ delay: idx * 0.05 }}
-                            className={`p-6 rounded-3xl border relative overflow-hidden ${subject ? 'bg-dark-card/80 border-google-blue/30 shadow-lg shadow-google-blue/5' : 'bg-dark-card/50 border-white/5 opacity-60'} flex justify-between items-center group transition-all`}
+                            className={`p-6 rounded-3xl border relative overflow-hidden flex flex-col justify-between group h-40
+                                ${subject
+                                    ? 'bg-organic-gray border-white/5 shadow-lg hover:border-organic-green/30'
+                                    : 'bg-organic-dark/50 border-white/5 opacity-60 border-dashed'
+                                }
+                            `}
                         >
+                            {/* Decorative Glow */}
                             {subject && (
-                                <motion.div
-                                    animate={{
-                                        opacity: [0.05, 0.1, 0.05],
-                                        background: [`radial-gradient(circle, ${subject.theme.primary} 0%, transparent 70%)`, `radial-gradient(circle, #9333ea 0%, transparent 70%)`, `radial-gradient(circle, ${subject.theme.primary} 0%, transparent 70%)`]
-                                    }}
-                                    transition={{ duration: 5, repeat: Infinity }}
-                                    className="absolute inset-0 pointer-events-none"
-                                />
+                                <div className="absolute -right-10 -top-10 w-24 h-24 bg-organic-green/5 rounded-full blur-2xl group-hover:bg-organic-green/10 transition-colors" />
                             )}
-                            <div className="flex items-center gap-4">
-                                <div className="text-2xl">{day.icon}</div>
-                                <div>
-                                    <h3 className="text-lg font-black font-arabic text-white">{day.arb}</h3>
-                                    <p className="text-sm font-english text-gray-500">{day.eng}</p>
+
+                            <div className="flex justify-between items-start z-10">
+                                <div className="flex items-center gap-3">
+                                    <span className="text-3xl filter grayscale group-hover:grayscale-0 transition-all duration-300">{day.icon}</span>
+                                    <div>
+                                        <h3 className="text-xl font-black font-arabic text-white group-hover:text-organic-green transition-colors">{day.arb}</h3>
+                                        <p className="text-xs font-english text-gray-500 uppercase tracking-widest">{day.eng}</p>
+                                    </div>
                                 </div>
+                                {subject && (
+                                    <a href={`/subject/${subject.id}`} className="p-2 bg-white/5 rounded-full text-gray-400 hover:text-white hover:bg-organic-green hover:scale-110 transition-all">
+                                        <ExternalLink size={14} />
+                                    </a>
+                                )}
                             </div>
 
-                            <div className="text-right">
+                            <div className="z-10 mt-4">
                                 {subject ? (
-                                    <div className="flex flex-col items-end gap-1">
-                                        <span className={`px-4 py-1 rounded-full text-xs font-bold font-arabic`} style={{ backgroundColor: `${subject.theme.primary}20`, color: subject.theme.primary }}>
-                                            {subject.name}
-                                        </span>
-                                        <span className="text-[10px] text-gray-400 font-arabic flex items-center gap-1 group-hover:text-white transition-colors">
-                                            <Clock size={10} /> {subject.theme.scientist} @ الدرس
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <span className="w-2 h-2 rounded-full bg-organic-green animate-pulse" />
+                                            <span className="text-sm font-bold font-arabic text-white">
+                                                {subject.name}
+                                            </span>
+                                        </div>
+                                        <span className="text-[10px] text-gray-500 font-bold border border-white/10 px-2 py-1 rounded-lg">
+                                            {subject.theme.scientist}
                                         </span>
                                     </div>
                                 ) : (
-                                    <span className="text-gray-600 font-arabic text-sm">يوم راحة أو مراجعة ☕</span>
+                                    <div className="flex items-center gap-2 text-gray-500">
+                                        <Clock size={14} />
+                                        <span className="text-xs font-arabic">راحة / مراجعة</span>
+                                    </div>
                                 )}
                             </div>
                         </motion.div>

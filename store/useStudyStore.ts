@@ -64,16 +64,16 @@ export const useStudyStore = create<StudyState>()(
             timeline: [],
             isSidebarOpen: false,
 
-            toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
+            toggleSidebar: () => set((state: StudyState) => ({ isSidebarOpen: !state.isSidebarOpen })),
 
-            setUserId: (id) => set({ userId: id }),
-            setUserName: (name) => {
+            setUserId: (id: string | null) => set({ userId: id }),
+            setUserName: (name: 'Mohamed' | 'Enji' | null) => {
                 set({ userName: name, userId: name ? `user_${name.toLowerCase()}` : null });
                 if (name) get().pullFromCloud();
             },
 
             toggleMission: (missionId: string) => {
-                set((state) => {
+                set((state: StudyState) => {
                     const newCompleted = {
                         ...state.completedMissions,
                         [missionId]: !state.completedMissions[missionId],
@@ -95,8 +95,8 @@ export const useStudyStore = create<StudyState>()(
                 });
             },
 
-            addWish: (text) => {
-                set((state) => ({
+            addWish: (text: string) => {
+                set((state: StudyState) => ({
                     wishes: [
                         { id: Math.random().toString(36).substr(2, 9), text, completed: false, createdAt: new Date().toISOString() },
                         ...state.wishes
@@ -105,15 +105,15 @@ export const useStudyStore = create<StudyState>()(
                 get().syncToCloud();
             },
 
-            toggleWish: (id) => {
-                set((state) => ({
+            toggleWish: (id: string) => {
+                set((state: StudyState) => ({
                     wishes: state.wishes.map(w => w.id === id ? { ...w, completed: !w.completed } : w)
                 }));
                 get().syncToCloud();
             },
 
-            addVent: (text, mood) => {
-                set((state) => ({
+            addVent: (text: string, mood: string) => {
+                set((state: StudyState) => ({
                     ventLogs: [
                         { id: Math.random().toString(36).substr(2, 9), text, mood, createdAt: new Date().toISOString() },
                         ...state.ventLogs
@@ -126,14 +126,29 @@ export const useStudyStore = create<StudyState>()(
                 get().syncToCloud();
             },
 
-            updateMission: (subjectId, missionId, updates) => {
-                set((state) => {
+            updateMission: (subjectId: string, missionId: string, updates: Partial<Mission>) => {
+                set((state: StudyState) => {
                     const newPlan = state.studyPlan.map((sub: Subject) => {
                         if (sub.id !== subjectId) return sub;
                         let updatedSub = { ...sub };
-                        if (updatedSub.missions) updatedSub.missions = updatedSub.missions.map(m => m.id === missionId ? { ...m, ...updates } : m);
-                        if (updatedSub.units) updatedSub.units = updatedSub.units.map(u => ({ ...u, missions: u.missions.map(m => m.id === missionId ? { ...m, ...updates } : m) }));
-                        if (updatedSub.sections) updatedSub.sections = updatedSub.sections.map(s => ({ ...s, missions: s.missions.map(m => m.id === missionId ? { ...m, ...updates } : m) }));
+                        // Handle direct missions
+                        if (updatedSub.missions) {
+                            updatedSub.missions = updatedSub.missions.map(m => m.id === missionId ? { ...m, ...updates } : m);
+                        }
+                        // Handle units
+                        if (updatedSub.units) {
+                            updatedSub.units = updatedSub.units.map(u => ({
+                                ...u,
+                                missions: u.missions.map(m => m.id === missionId ? { ...m, ...updates } : m)
+                            }));
+                        }
+                        // Handle sections
+                        if (updatedSub.sections) {
+                            updatedSub.sections = updatedSub.sections.map(s => ({
+                                ...s,
+                                missions: s.missions.map(m => m.id === missionId ? { ...m, ...updates } : m)
+                            }));
+                        }
                         return updatedSub;
                     });
                     setTimeout(() => get().syncToCloud(), 1000);
@@ -141,8 +156,8 @@ export const useStudyStore = create<StudyState>()(
                 });
             },
 
-            updateSubject: (subjectId, updates) => {
-                set((state) => {
+            updateSubject: (subjectId: string, updates: Partial<Subject>) => {
+                set((state: StudyState) => {
                     const newPlan = state.studyPlan.map((sub: Subject) => sub.id === subjectId ? { ...sub, ...updates } : sub);
                     setTimeout(() => get().syncToCloud(), 1000);
                     return { studyPlan: newPlan };
