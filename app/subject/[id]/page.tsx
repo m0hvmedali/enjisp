@@ -29,31 +29,62 @@ export default function SubjectPage() {
     const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [filter, setFilter] = useState<'all' | 'completed' | 'incomplete'>('all');
+    const [sort, setSort] = useState<'default' | 'duration' | 'title'>('default');
 
-    if (!mounted) return <div className="min-h-screen bg-dark-bg" />;
+    if (!mounted) return <div className="min-h-screen bg-cine-dark" />;
 
     if (!subject) {
         return (
-            <div className="flex items-center justify-center h-screen bg-dark-bg">
-                <div className="text-center p-12 bg-dark-card rounded-3xl border border-white/10">
+            <div className="flex items-center justify-center h-screen bg-cine-dark">
+                <div className="text-center p-12 bg-cine-card rounded-3xl border border-white/10">
                     <div className="text-6xl mb-6">🔍</div>
-                    <h2 className="text-2xl font-black font-arabic mb-4">المادة غير موجودة</h2>
-                    <button onClick={() => router.push('/')} className="px-6 py-3 bg-accent-blue rounded-xl font-bold">العودة للرئيسية</button>
+                    <h2 className="text-2xl font-black font-arabic mb-4 text-white">المادة غير موجودة</h2>
+                    <button onClick={() => router.push('/')} className="px-6 py-3 bg-cine-accent text-cine-dark rounded-xl font-bold shadow-lg shadow-cine-accent/20">العودة للرئيسية</button>
                 </div>
             </div>
         );
     }
 
+    const processMissions = (missions: Mission[]) => {
+        let result = [...missions];
+
+        // Filter
+        if (filter === 'completed') result = result.filter(m => completedMissions[m.id]);
+        else if (filter === 'incomplete') result = result.filter(m => !completedMissions[m.id]);
+
+        // Search
+        if (searchQuery) {
+            result = result.filter(m =>
+                m.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                m.content?.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        }
+
+        // Sort
+        if (sort === 'title') {
+            result.sort((a, b) => a.title.localeCompare(b.title, 'ar'));
+        } else if (sort === 'duration') {
+            const getVal = (s: string) => {
+                const num = parseInt(s);
+                return isNaN(num) ? 9999 : num;
+            };
+            result.sort((a, b) => getVal(a.duration || '0') - getVal(b.duration || '0'));
+        }
+
+        return result;
+    };
+
     const handleToggleMission = (missionId: string, missionTitle: string) => {
         toggleMission(missionId);
         if (!completedMissions[missionId]) {
-            toast.success(`خدي بوسه: ${missionTitle}`, {
-                icon: '💎',
+            toast.success(`أحسنتِ يا هندسة: ${missionTitle}`, {
+                icon: '🔥',
                 style: {
-                    borderRadius: '16px',
-                    background: '#0f172a',
+                    borderRadius: '20px',
+                    background: '#111',
                     color: '#fff',
-                    border: '1px solid rgba(59, 130, 246, 0.2)'
+                    border: '1px solid #38bdf8'
                 }
             });
         }
@@ -64,176 +95,158 @@ export default function SubjectPage() {
         setIsModalOpen(true);
     };
 
+    const FilterButton = ({ value, label, icon: Icon }: any) => (
+        <button
+            onClick={() => setFilter(value)}
+            className={`px-4 py-2 rounded-xl text-sm flex items-center gap-2 transition-all ${filter === value
+                ? 'bg-cine-accent text-cine-dark font-black shadow-lg shadow-cine-accent/20'
+                : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                }`}
+        >
+            <Icon size={14} />
+            <span className="font-arabic">{label}</span>
+        </button>
+    );
+
+    const SortButton = ({ value, label, icon: Icon }: any) => (
+        <button
+            onClick={() => setSort(value)}
+            className={`px-4 py-2 rounded-xl text-sm flex items-center gap-2 transition-all ${sort === value
+                ? 'bg-cine-accent text-cine-dark font-black shadow-lg shadow-cine-accent/20'
+                : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                }`}
+        >
+            <Icon size={14} />
+            <span className="font-arabic">{label}</span>
+        </button>
+    );
+
     return (
-        <div className="flex min-h-screen bg-dark-bg relative overflow-hidden">
+        <div className="flex min-h-screen bg-cine-dark relative overflow-hidden selection:bg-cine-accent selection:text-cine-dark">
             <div className="fixed inset-0 bg-cosmic-mesh animate-mesh opacity-20 pointer-events-none" />
-            <div className="fixed inset-0 bg-cosmic-gradient pointer-events-none" />
 
             <Sidebar />
 
-            <main className="flex-1 pb-24 lg:pb-8 overflow-y-auto overflow-x-hidden">
+            <main className="flex-1 pb-24 lg:pb-8 overflow-y-auto overflow-x-hidden relative z-10">
                 <MobileNav />
 
-                <div className="max-w-6xl mx-auto p-4 lg:p-12">
-                    {/* Action Bar */}
-                    <div className="flex justify-between items-center mb-12">
-                        <motion.button
-                            whileHover={{ x: -5 }}
-                            onClick={() => router.push('/')}
-                            className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/5 border border-white/5 text-gray-400 hover:text-white transition-all font-arabic font-bold"
-                        >
-                            <ArrowLeft size={18} />
-                            Back
-                        </motion.button>
-
-                        <div className="flex gap-2">
-                            <div className="relative group hidden md:block">
-                                <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 group-hover:text-accent-blue transition-colors" size={18} />
-                                <input
-                                    className="bg-dark-card border border-white/10 rounded-2xl py-3 pr-12 pl-6 outline-none focus:ring-2 ring-accent-blue/50 w-64 transition-all text-sm"
-                                    placeholder="ابحث عن مهمة..."
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Subject Hero */}
+                {/* Cinematic Hero */}
+                <div className="relative h-72 md:h-96 w-full overflow-hidden shadow-2xl">
                     <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="relative mb-16 p-8 lg:p-12 rounded-[3rem] overflow-hidden bg-gradient-to-br from-dark-card to-transparent border border-white/10"
+                        initial={{ scale: 1.1, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 0.6 }}
+                        className="absolute inset-0"
                     >
-                        {/* Glow effect */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-accent-blue/20 rounded-full blur-[100px] pointer-events-none" />
+                        <img
+                            src={subject.scheduleImage || 'https://images.unsplash.com/photo-1614728263952-84ea206f99b6?auto=format&fit=crop&q=80'}
+                            alt={subject.name}
+                            className="w-full h-full object-cover"
+                        />
+                    </motion.div>
+                    <div className={`absolute inset-0 bg-gradient-to-t from-cine-dark via-cine-dark/40 to-transparent`} />
 
-                        <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 text-center md:text-right">
-                            <div className="text-8xl lg:text-9xl drop-shadow-2xl animate-float">
+                    <div className="absolute inset-0 flex flex-col justify-end p-8 lg:p-16 max-w-6xl mx-auto w-full">
+                        <motion.div
+                            initial={{ opacity: 0, x: 50 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="flex items-center gap-6 mb-4"
+                        >
+                            <div className="text-7xl lg:text-9xl drop-shadow-[0_0_30px_rgba(255,255,255,0.2)] animate-float">
                                 {subject.icon}
                             </div>
-                            <div className="flex-1">
-                                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-blue/20 text-accent-blue font-black text-xs uppercase tracking-widest mb-4">
-                                    <Sparkles size={12} /> {subject.theme.scientist}
-                                </div>
-                                <h1 className="text-5xl lg:text-7xl font-black font-arabic mb-4 tracking-tighter">
+                            <div>
+                                <h1 className="text-5xl lg:text-8xl font-black font-arabic text-white mb-2 tracking-tight drop-shadow-xl">
                                     {subject.name}
                                 </h1>
-                                <p className="text-gray-500 font-arabic text-lg max-w-xl">
-                                    هذا الطريق سيوصلك بلا شك للتفوق في {subject.name} مع خالص التقدير لروح العلم التي تتبعها.
+                                <p className="text-xl lg:text-2xl text-cine-accent font-arabic font-bold flex items-center gap-2">
+                                    <Sparkles size={20} className="animate-pulse" /> {subject.theme.scientist}
                                 </p>
                             </div>
+                        </motion.div>
+                    </div>
+                </div>
 
-                            <div className="hidden lg:grid grid-cols-2 gap-4">
-                                <div className="p-6 rounded-3xl bg-white/5 border border-white/10 text-center">
-                                    <span className="block text-3xl font-black font-english text-accent-blue">{subject.units?.length || subject.sections?.length || 0}</span>
-                                    <span className="text-[10px] text-gray-500 font-arabic font-bold uppercase tracking-widest">أقسام</span>
-                                </div>
-                                <div className="p-6 rounded-3xl bg-white/5 border border-white/10 text-center">
-                                    <span className="block text-3xl font-black font-english text-emerald-500">
-                                        {Math.round(subject.missions?.length || 0)}
-                                    </span>
-                                    <span className="text-[10px] text-gray-500 font-arabic font-bold uppercase tracking-widest">مهام</span>
-                                </div>
-                            </div>
+                {/* Control Bar */}
+                <div className="max-w-5xl mx-auto px-4 -mt-10 relative z-20 mb-12">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-cine-card/90 backdrop-blur-2xl border border-white/10 p-4 md:p-6 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col md:flex-row gap-6 justify-between items-center"
+                    >
+                        {/* Search */}
+                        <div className="relative w-full md:w-64">
+                            <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
+                            <input
+                                className="w-full bg-white/5 border border-white/5 rounded-2xl py-3 pr-12 pl-6 outline-none focus:border-cine-accent transition-all text-sm font-arabic"
+                                placeholder="ابحثِ عن مهمة..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="hidden md:block w-px h-12 bg-white/10" />
+
+                        {/* Filters */}
+                        <div className="flex gap-2 bg-black/30 p-1.5 rounded-2xl w-full md:w-auto overflow-x-auto">
+                            <FilterButton value="all" label="الكل" icon={Sparkles} />
+                            <FilterButton value="completed" label="تم" icon={Sparkles} />
+                            <FilterButton value="incomplete" label="باقي" icon={Sparkles} />
+                        </div>
+
+                        <div className="hidden md:block w-px h-12 bg-white/10" />
+
+                        {/* Sort */}
+                        <div className="flex gap-2 bg-black/30 p-1.5 rounded-2xl w-full md:w-auto overflow-x-auto">
+                            <SortButton value="default" label="افتراضي" icon={Sparkles} />
+                            <SortButton value="title" label="الأبجدي" icon={Sparkles} />
                         </div>
                     </motion.div>
+                </div>
 
-                    {/* Schedule Image Section */}
-                    {subject.scheduleImage && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="mb-16"
-                        >
-                            <h2 className="text-2xl font-black font-arabic mb-6 flex items-center gap-3">
-                                <span className="p-2 bg-accent-gold/20 rounded-xl text-accent-gold">🗺️</span>
-                                <span>المخطط الذهبي للمادة</span>
-                            </h2>
-                            <div className="relative group rounded-[2.5rem] overflow-hidden border border-white/10 bg-dark-card shadow-2xl">
-                                <img
-                                    src={subject.scheduleImage}
-                                    alt="مخطط المادة"
-                                    className="w-full h-auto object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500 cursor-zoom-in"
-                                    onClick={() => window.open(subject.scheduleImage, '_blank')}
-                                    onError={(e) => {
-                                        (e.target as HTMLImageElement).style.display = 'none';
-                                    }}
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-dark-bg/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-8 pointer-events-none">
-                                    <p className="text-white font-arabic font-bold">إضغط لمشاهدة المخطط بالحجم الكامل 🔍</p>
+                {/* Content */}
+                <div className="max-w-5xl mx-auto px-4 pb-20 space-y-16">
+                    {/* Render Missions */}
+                    {[
+                        { label: 'مهام المواد', missions: subject.missions },
+                        ...(subject.units?.map((u: any, idx: number) => ({ label: u.name, missions: u.missions })) || []),
+                        ...(subject.sections?.map((s: any, idx: number) => ({ label: s.name, missions: s.missions })) || [])
+                    ].map((section, idx) => {
+                        const missions = section.missions ? processMissions(section.missions) : [];
+                        if (missions.length === 0) return null;
+
+                        return (
+                            <section key={idx} className="animate-fade-in px-2">
+                                <h2 className="text-2xl font-black font-arabic mb-8 text-white flex items-center gap-4">
+                                    <span className="w-3 h-10 bg-gradient-to-t from-cine-accent to-cine-blue rounded-full" />
+                                    {section.label}
+                                    <span className="text-xs font-bold text-gray-500 bg-white/5 px-4 py-1.5 rounded-full">
+                                        {missions.length} مهمة
+                                    </span>
+                                </h2>
+                                <div className="grid grid-cols-1 gap-6">
+                                    {missions.map((m, i) => (
+                                        <MissionItem
+                                            key={m.id}
+                                            mission={m}
+                                            index={i}
+                                            completed={!!completedMissions[m.id]}
+                                            onToggle={() => handleToggleMission(m.id, m.title)}
+                                            onViewDetails={() => openMissionModal(m)}
+                                            accentColor={subject.theme.primary}
+                                        />
+                                    ))}
                                 </div>
-                            </div>
-                        </motion.div>
+                            </section>
+                        );
+                    })}
+
+                    {/* Empty State */}
+                    {processMissions(subject.missions || []).length === 0 && searchQuery && (
+                        <div className="text-center py-20 bg-cine-card rounded-[3rem] border border-dashed border-white/10">
+                            <div className="text-6xl mb-6">🏜️</div>
+                            <p className="text-gray-400 font-arabic text-xl">مالقيتش حاجة بالاسم ده يا هندسة!</p>
+                        </div>
                     )}
-
-                    {/* Content Structure */}
-                    <div className="space-y-12">
-                        {subject.missions && subject.missions.length > 0 && (
-                            <section>
-                                <h2 className="text-2xl font-black font-arabic mb-6 px-4 border-r-4 border-accent-blue flex items-center gap-3">
-                                    <BookOpen className="text-accent-blue" /> مهام المادة
-                                </h2>
-                                <div className="grid grid-cols-1 gap-4">
-                                    {subject.missions.map((m, i) => (
-                                        <MissionItem
-                                            key={m.id}
-                                            mission={m}
-                                            index={i}
-                                            completed={!!completedMissions[m.id]}
-                                            onToggle={() => handleToggleMission(m.id, m.title)}
-                                            onViewDetails={() => openMissionModal(m)}
-                                            accentColor={subject.theme.primary}
-                                        />
-                                    ))}
-                                </div>
-                            </section>
-                        )}
-
-                        {subject.units?.map((unit, uIdx) => (
-                            <section key={unit.name}>
-                                <h2 className="text-2xl font-black font-arabic mb-6 px-4 border-r-4 border-accent-purple flex items-center gap-3">
-                                    <div className="p-2 bg-accent-purple/20 rounded-xl text-accent-purple text-sm">{uIdx + 1}</div>
-                                    {unit.name}
-                                </h2>
-                                <div className="grid grid-cols-1 gap-4">
-                                    {unit.missions.map((m, i) => (
-                                        <MissionItem
-                                            key={m.id}
-                                            mission={m}
-                                            index={i}
-                                            completed={!!completedMissions[m.id]}
-                                            onToggle={() => handleToggleMission(m.id, m.title)}
-                                            onViewDetails={() => openMissionModal(m)}
-                                            accentColor={subject.theme.primary}
-                                        />
-                                    ))}
-                                </div>
-                            </section>
-                        ))}
-
-                        {subject.sections?.map((section, sIdx) => (
-                            <section key={section.name}>
-                                <h2 className="text-2xl font-black font-arabic mb-6 px-4 border-r-4 border-accent-gold flex items-center gap-3">
-                                    <div className="p-2 bg-accent-gold/20 rounded-xl text-accent-gold text-sm">{sIdx + 1}</div>
-                                    {section.name}
-                                </h2>
-                                <div className="grid grid-cols-1 gap-4">
-                                    {section.missions.map((m, i) => (
-                                        <MissionItem
-                                            key={m.id}
-                                            mission={m}
-                                            index={i}
-                                            completed={!!completedMissions[m.id]}
-                                            onToggle={() => handleToggleMission(m.id, m.title)}
-                                            onViewDetails={() => openMissionModal(m)}
-                                            accentColor={subject.theme.primary}
-                                        />
-                                    ))}
-                                </div>
-                            </section>
-                        ))}
-                    </div>
                 </div>
             </main>
 

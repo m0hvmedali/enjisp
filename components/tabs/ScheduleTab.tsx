@@ -8,28 +8,28 @@ export default function ScheduleTab() {
     const { studyPlan } = useStudyStore();
 
     const days = [
-        { eng: 'Saturday', arb: 'السبت', icon: '🌙' },
-        { eng: 'Sunday', arb: 'الأحد', icon: '☀️' },
-        { eng: 'Monday', arb: 'الاثنين', icon: '🌀' },
-        { eng: 'Tuesday', arb: 'الثلاثاء', icon: '🔋' },
-        { eng: 'Wednesday', arb: 'الأربعاء', icon: '⚡' },
-        { eng: 'Thursday', arb: 'الخميس', icon: '💎' },
-        { eng: 'Friday', arb: 'الجمعة', icon: '🙌' },
+        { eng: 'Saturday', arb: 'السبت', icon: '🌙', subjectId: 'english' },
+        { eng: 'Sunday', arb: 'الأحد', icon: '☀️', subjectId: 'chemistry' },
+        { eng: 'Monday', arb: 'الاثنين', icon: '🌀', subjectId: 'math' },
+        { eng: 'Tuesday', arb: 'الثلاثاء', icon: '🔋', subjectId: 'arabic' },
+        { eng: 'Wednesday', arb: 'الأربعاء', icon: '⚡', subjectId: 'physics' },
+        { eng: 'Thursday', arb: 'الخميس', icon: '💎', subjectId: 'math' },
+        { eng: 'Friday', arb: 'الجمعة', icon: '🙌', subjectId: 'physics' },
     ];
 
     return (
         <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="p-6 max-w-4xl mx-auto"
+            className="p-6 max-w-4xl mx-auto selection:bg-cine-accent selection:text-cine-dark"
         >
-            <h1 className="text-3xl font-black font-arabic mb-8 text-center bg-gradient-to-r from-google-blue to-accent-purple bg-clip-text text-transparent italic">
-                جدول الانتحار العلمي
+            <h1 className="text-4xl font-black font-arabic mb-12 text-center bg-gradient-to-r from-cine-accent via-cine-blue to-accent-purple bg-clip-text text-transparent italic tracking-tighter">
+                جدول المعارك الدراسية ⚔️
             </h1>
 
             <div className="space-y-4">
                 {days.map((day, idx) => {
-                    const subject = studyPlan.find(s => s.lessonDay?.includes(day.arb));
+                    const subject = studyPlan.find(s => s.id === day.subjectId);
 
                     return (
                         <motion.div

@@ -15,6 +15,14 @@ module.exports = {
                     lighter: '#1e293b',
                     border: 'rgba(255, 255, 255, 0.08)',
                 },
+                cine: {
+                    dark: '#050505',
+                    card: '#111111',
+                    accent: '#38bdf8', // Blue
+                    pink: '#ef4444',   // Reddish Pink
+                    red: '#ea1c1c',
+                    blue: '#2563eb',
+                },
                 google: {
                     blue: '#4285F4',
                     red: '#EA4335',
@@ -28,6 +36,7 @@ module.exports = {
                     gold: '#f59e0b',
                     pink: '#ec4899',
                     indigo: '#6366f1',
+                    red: '#ef4444',
                 }
             },
             fontFamily: {
