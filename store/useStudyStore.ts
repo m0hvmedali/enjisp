@@ -62,7 +62,10 @@ export const useStudyStore = create<StudyState>()(
             timeline: [],
 
             setUserId: (id) => set({ userId: id }),
-            setUserName: (name) => set({ userName: name }),
+            setUserName: (name) => {
+                set({ userName: name, userId: name ? `user_${name.toLowerCase()}` : null });
+                if (name) get().pullFromCloud();
+            },
 
             toggleMission: (missionId: string) => {
                 set((state) => {

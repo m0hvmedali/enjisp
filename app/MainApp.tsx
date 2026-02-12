@@ -63,26 +63,6 @@ export default function MainApp() {
                         </button>
                     </div>
 
-                    {!userId && (
-                        <div className="space-y-4 bg-white/5 p-6 rounded-3xl border border-white/10">
-                            <p className="text-xs text-gray-500 font-arabic">أدخل معرف السحابة للمزامنة (اختياري)</p>
-                            <div className="relative">
-                                <LogIn className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
-                                <input
-                                    className="w-full bg-dark-bg border border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm text-white outline-none focus:border-google-blue transition-all"
-                                    placeholder="your-id-here"
-                                    value={tempUserId}
-                                    onChange={(e) => setTempUserId(e.target.value)}
-                                />
-                            </div>
-                            <button
-                                onClick={() => { setUserId(tempUserId); pullFromCloud(); toast.success('تم ربط السحابة!'); }}
-                                className="w-full py-3 bg-white/5 hover:bg-white/10 rounded-xl text-white font-arabic font-bold transition-all"
-                            >
-                                ربط السحابة
-                            </button>
-                        </div>
-                    )}
                 </motion.div>
             </div>
         );
