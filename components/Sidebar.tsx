@@ -5,11 +5,12 @@ import { Home, Book, Settings, LogOut, Sparkles, X, Menu, Zap, Atom, Divide } fr
 import { useRouter, usePathname } from 'next/navigation';
 import { useStudyStore } from '@/store/useStudyStore';
 import Link from 'next/link';
+import { Subject } from '@/types';
 
 export default function Sidebar() {
     const router = useRouter();
     const pathname = usePathname();
-    const { studyPlan, currentUser } = useStudyStore();
+    const { studyPlan, userName } = useStudyStore();
 
     const menuItems = [
         { icon: Home, label: 'الرئيسية', path: '/', color: 'text-cine-accent' },
@@ -51,7 +52,7 @@ export default function Sidebar() {
                     المواد الدراسية
                 </p>
 
-                {studyPlan.map((sub) => (
+                {studyPlan.map((sub: Subject) => (
                     <Link
                         key={sub.id}
                         href={`/subject/${sub.id}`}
@@ -69,10 +70,10 @@ export default function Sidebar() {
             <div className="p-6 bg-cine-card/50 backdrop-blur-xl border-t border-white/5">
                 <div className="flex items-center gap-4 p-3 rounded-2xl group cursor-pointer hover:bg-white/5 transition-all">
                     <div className="w-10 h-10 bg-gradient-to-br from-cine-accent to-cine-blue rounded-xl flex items-center justify-center font-black text-cine-dark text-lg shadow-lg shadow-cine-accent/20">
-                        {currentUser?.[0] || 'E'}
+                        {userName?.[0] || 'E'}
                     </div>
                     <div className="flex-1">
-                        <h4 className="font-bold font-arabic text-xs text-white">{currentUser || 'إنجي'}</h4>
+                        <h4 className="font-bold font-arabic text-xs text-white">{userName || 'إنجي'}</h4>
                         <p className="text-[10px] text-cine-accent font-arabic font-bold flex items-center gap-1">
                             <Zap size={8} className="animate-pulse" /> هندسة مود
                         </p>

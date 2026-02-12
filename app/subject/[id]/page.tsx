@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, ChangeEvent } from 'react';
 import { useStudyStore } from '@/store/useStudyStore';
 import Sidebar from '@/components/Sidebar';
 import RightPanel from '@/components/RightPanel';
@@ -180,7 +180,7 @@ export default function SubjectPage() {
                                 className="w-full bg-white/5 border border-white/5 rounded-2xl py-3 pr-12 pl-6 outline-none focus:border-cine-accent transition-all text-sm font-arabic"
                                 placeholder="ابحثِ عن مهمة..."
                                 value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
                             />
                         </div>
 
