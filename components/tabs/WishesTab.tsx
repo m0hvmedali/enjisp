@@ -33,16 +33,31 @@ export default function WishesTab() {
             </div>
 
             {/* Progress Bar */}
-            <div className="bg-dark-card border border-white/10 p-6 rounded-3xl mb-8">
-                <div className="flex justify-between items-center mb-4">
-                    <span className="font-arabic font-bold text-sm text-gray-400">الإنجاز</span>
+            <div className="bg-dark-card/50 backdrop-blur-2xl border border-white/10 p-6 rounded-3xl mb-8 relative overflow-hidden">
+                <motion.div
+                    animate={{
+                        opacity: [0.05, 0.1, 0.05],
+                        scale: [1, 1.2, 1]
+                    }}
+                    transition={{ duration: 6, repeat: Infinity }}
+                    className="absolute inset-0 bg-accent-pink rounded-full blur-[60px] pointer-events-none translate-y-1/2"
+                />
+                <div className="flex justify-between items-center mb-4 relative z-10">
+                    <span className="font-arabic font-bold text-sm text-gray-400">الإنجاز الإسبوعي</span>
                     <span className="font-english font-bold text-accent-pink">{completedCount}/{wishes.length}</span>
                 </div>
-                <div className="h-3 bg-white/5 rounded-full overflow-hidden">
+                <div className="h-3 bg-white/5 rounded-full overflow-hidden relative z-10">
                     <motion.div
                         initial={{ width: 0 }}
-                        animate={{ width: `${(completedCount / (wishes.length || 1)) * 100}%` }}
-                        className="h-full bg-accent-pink shadow-[0_0_15px_rgba(236,72,153,0.5)]"
+                        animate={{
+                            width: `${(completedCount / (wishes.length || 1)) * 100}%`,
+                            backgroundColor: ['#ec4899', '#9333ea', '#ec4899']
+                        }}
+                        transition={{
+                            width: { duration: 1 },
+                            backgroundColor: { duration: 5, repeat: Infinity }
+                        }}
+                        className="h-full shadow-[0_0_20px_rgba(236,72,153,0.6)]"
                     />
                 </div>
             </div>

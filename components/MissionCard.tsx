@@ -77,7 +77,15 @@ export default function MissionCard({
 
             {/* Completion Overlay */}
             {mission.completed && (
-                <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl pointer-events-none" />
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{
+                        opacity: 1,
+                        backgroundColor: ['rgba(16, 185, 129, 0.05)', 'rgba(59, 130, 246, 0.05)', 'rgba(16, 185, 129, 0.05)']
+                    }}
+                    transition={{ duration: 4, repeat: Infinity }}
+                    className="absolute inset-0 rounded-2xl pointer-events-none"
+                />
             )}
         </motion.div>
     );

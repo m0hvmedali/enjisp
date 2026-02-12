@@ -44,6 +44,7 @@ export default function SubjectCard({
         >
             {/* Dynamic Background Shapes */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-white/10 transition-colors" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none" />
 
             {/* Lesson Badge */}
             {hasLessonToday && (
@@ -59,9 +60,16 @@ export default function SubjectCard({
             {/* Content */}
             <div className="relative z-10 flex flex-col h-full">
                 <div className="flex justify-between items-start mb-6">
-                    <div className="text-6xl drop-shadow-xl group-hover:scale-110 transition-transform duration-500">
+                    <motion.div
+                        animate={{
+                            rotate: [0, 5, -5, 0],
+                            scale: [1, 1.05, 1]
+                        }}
+                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                        className="text-6xl drop-shadow-xl group-hover:scale-110 transition-transform duration-500"
+                    >
                         {icon}
-                    </div>
+                    </motion.div>
                     <div className="flex flex-col items-end">
                         <span className="text-3xl font-black font-english tracking-tighter">
                             {Math.round(progress)}%

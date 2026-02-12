@@ -36,8 +36,9 @@ export default function MobileNav({ activeTab = '', setActiveTab = () => { } }: 
                             <motion.div
                                 animate={{
                                     scale: isActive ? 1.2 : 1,
-                                    color: isActive ? '#3b82f6' : '#64748b'
+                                    color: isActive ? ['#3b82f6', '#9333ea', '#3b82f6'] : '#64748b'
                                 }}
+                                transition={isActive ? { duration: 4, repeat: Infinity } : { duration: 0.3 }}
                                 className="z-10"
                             >
                                 <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
@@ -57,7 +58,10 @@ export default function MobileNav({ activeTab = '', setActiveTab = () => { } }: 
                                 <motion.div
                                     layoutId="activeTab"
                                     className="absolute inset-0 bg-accent-blue/10 rounded-2xl mx-1"
-                                    transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                                    animate={{
+                                        backgroundColor: ['rgba(59, 130, 246, 0.1)', 'rgba(147, 51, 234, 0.1)', 'rgba(59, 130, 246, 0.1)']
+                                    }}
+                                    transition={{ duration: 4, repeat: Infinity }}
                                 />
                             )}
                         </button>

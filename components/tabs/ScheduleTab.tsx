@@ -24,7 +24,7 @@ export default function ScheduleTab() {
             className="p-6 max-w-4xl mx-auto"
         >
             <h1 className="text-3xl font-black font-arabic mb-8 text-center bg-gradient-to-r from-google-blue to-accent-purple bg-clip-text text-transparent italic">
-                جدول المعارك الدراسية ⚔️
+                جدول الانتحار العلمي
             </h1>
 
             <div className="space-y-4">
@@ -36,9 +36,20 @@ export default function ScheduleTab() {
                             key={day.eng}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
+                            whileHover={{ scale: 1.03, rotate: 0.5 }}
                             transition={{ delay: idx * 0.05 }}
-                            className={`p-6 rounded-3xl border ${subject ? 'bg-dark-card border-google-blue/30' : 'bg-dark-card/50 border-white/5 opacity-60'} flex justify-between items-center group hover:scale-[1.02] transition-all`}
+                            className={`p-6 rounded-3xl border relative overflow-hidden ${subject ? 'bg-dark-card/80 border-google-blue/30 shadow-lg shadow-google-blue/5' : 'bg-dark-card/50 border-white/5 opacity-60'} flex justify-between items-center group transition-all`}
                         >
+                            {subject && (
+                                <motion.div
+                                    animate={{
+                                        opacity: [0.05, 0.1, 0.05],
+                                        background: [`radial-gradient(circle, ${subject.theme.primary} 0%, transparent 70%)`, `radial-gradient(circle, #9333ea 0%, transparent 70%)`, `radial-gradient(circle, ${subject.theme.primary} 0%, transparent 70%)`]
+                                    }}
+                                    transition={{ duration: 5, repeat: Infinity }}
+                                    className="absolute inset-0 pointer-events-none"
+                                />
+                            )}
                             <div className="flex items-center gap-4">
                                 <div className="text-2xl">{day.icon}</div>
                                 <div>

@@ -47,7 +47,7 @@ export default function SubjectPage() {
     const handleToggleMission = (missionId: string, missionTitle: string) => {
         toggleMission(missionId);
         if (!completedMissions[missionId]) {
-            toast.success(`🎉 أحسنت! أنهيت: ${missionTitle}`, {
+            toast.success(`خدي بوسه: ${missionTitle}`, {
                 icon: '💎',
                 style: {
                     borderRadius: '16px',
@@ -65,7 +65,10 @@ export default function SubjectPage() {
     };
 
     return (
-        <div className="flex min-h-screen bg-dark-bg">
+        <div className="flex min-h-screen bg-dark-bg relative overflow-hidden">
+            <div className="fixed inset-0 bg-cosmic-mesh animate-mesh opacity-20 pointer-events-none" />
+            <div className="fixed inset-0 bg-cosmic-gradient pointer-events-none" />
+
             <Sidebar />
 
             <main className="flex-1 pb-24 lg:pb-8 overflow-y-auto overflow-x-hidden">
@@ -80,7 +83,7 @@ export default function SubjectPage() {
                             className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/5 border border-white/5 text-gray-400 hover:text-white transition-all font-arabic font-bold"
                         >
                             <ArrowLeft size={18} />
-                            العودة
+                            Back
                         </motion.button>
 
                         <div className="flex gap-2">
@@ -169,7 +172,7 @@ export default function SubjectPage() {
                         {subject.missions && subject.missions.length > 0 && (
                             <section>
                                 <h2 className="text-2xl font-black font-arabic mb-6 px-4 border-r-4 border-accent-blue flex items-center gap-3">
-                                    <BookOpen className="text-accent-blue" /> مهام عامة
+                                    <BookOpen className="text-accent-blue" /> مهام المادة
                                 </h2>
                                 <div className="grid grid-cols-1 gap-4">
                                     {subject.missions.map((m, i) => (

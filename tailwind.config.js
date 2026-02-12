@@ -38,6 +38,7 @@ module.exports = {
                 'radial-dark': 'radial-gradient(circle at 50% 50%, #1e293b 0%, #020617 100%)',
                 'cosmic-gradient': 'radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent), radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.15), transparent)',
                 'glass-gradient': 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01))',
+                'cosmic-mesh': 'linear-gradient(45deg, #020617, #0f172a, #1e293b, #020617)',
             },
             animation: {
                 'fade-in': 'fadeIn 0.5s ease-out',
@@ -45,8 +46,18 @@ module.exports = {
                 'scale-in': 'scaleIn 0.3s ease-out',
                 'pulse-glow': 'pulseGlow 2s infinite',
                 'float': 'float 3s ease-in-out infinite',
+                'mesh': 'mesh 15s ease infinite',
+                'shimmer': 'shimmer 2s linear infinite',
             },
             keyframes: {
+                mesh: {
+                    '0%, 100%': { backgroundPosition: '0% 50%', backgroundSize: '200% 200%' },
+                    '50%': { backgroundPosition: '100% 50%', backgroundSize: '200% 200%' },
+                },
+                shimmer: {
+                    '0%': { backgroundPosition: '-200% 0' },
+                    '100%': { backgroundPosition: '200% 0' },
+                },
                 fadeIn: {
                     '0%': { opacity: '0', transform: 'translateY(10px)' },
                     '100%': { opacity: '1', transform: 'translateY(0)' },
