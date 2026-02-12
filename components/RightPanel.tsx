@@ -51,7 +51,7 @@ export default function RightPanel() {
                                 key={i}
                                 whileHover={{ scale: 1.1, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="flex-1 p-2 rounded-xl bg-white/5 hover:bg-organic-green/20 hover:border-organic-green/30 border border-white/5 transition-all text-xl grayscale hover:grayscale-0"
+                                className="flex-1 p-2 rounded-xl bg-white/5 hover:bg-organic-green/20 hover:border-organic-green/30 border border-white/5 transition-all text-xl"
                             >
                                 {emoji}
                             </motion.button>

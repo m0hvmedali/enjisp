@@ -83,7 +83,7 @@ export default function Sidebar() {
                             className={linkClass(`/subject/${sub.id}`)}
                             onClick={() => toggleSidebar()}
                         >
-                            <span className="ml-4 text-xl group-hover:scale-110 transition-transform duration-300 filter grayscale group-hover:grayscale-0">{sub.icon}</span>
+                            <span className="ml-4 text-xl group-hover:scale-110 transition-transform duration-300">{sub.icon}</span>
                             <span className="font-bold font-arabic text-sm">{sub.name}</span>
                         </Link>
                     ))}

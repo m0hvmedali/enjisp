@@ -54,7 +54,7 @@ export default function ScheduleTab() {
 
                             <div className="flex justify-between items-start z-10">
                                 <div className="flex items-center gap-3">
-                                    <span className="text-3xl filter grayscale group-hover:grayscale-0 transition-all duration-300">{day.icon}</span>
+                                    <span className="text-3xl transition-all duration-300">{day.icon}</span>
                                     <div>
                                         <h3 className="text-xl font-black font-arabic text-white group-hover:text-organic-green transition-colors">{day.arb}</h3>
                                         <p className="text-xs font-english text-gray-500 uppercase tracking-widest">{day.eng}</p>
