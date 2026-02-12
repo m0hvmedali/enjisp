@@ -4,14 +4,16 @@ import { motion } from 'framer-motion';
 import { useStudyStore } from '@/store/useStudyStore';
 import SubjectCard from '@/components/SubjectCard';
 import { Sparkles, Bell } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function HomeTab() {
     const { studyPlan, completedMissions, userName } = useStudyStore();
+    const router = useRouter();
 
     // Helper to calculate score
     const totalMissions = studyPlan.reduce((acc, sub) => acc + (sub.missions?.length || 0), 0);
-    const completedCount = Object.keys(completedMissions).filter(id => completedMissions[id]).length;
-    const progressPercent = totalMissions > 0 ? Math.round((completedCount / totalMissions) * 100) : 0;
+    const completedCountGlobal = Object.keys(completedMissions).filter(id => completedMissions[id]).length;
+    const progressPercent = totalMissions > 0 ? Math.round((completedCountGlobal / totalMissions) * 100) : 0;
 
     return (
         <motion.div
@@ -59,14 +61,25 @@ export default function HomeTab() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {studyPlan.map((subject, idx) => (
-                    <SubjectCard
-                        key={subject.id}
-                        subject={subject}
-                        index={idx}
-                        completedCount={subject.missions?.filter(m => completedMissions[m.id]).length || 0}
-                    />
-                ))}
+                {studyPlan.map((subject, idx) => {
+                    const totalMissionsSub = subject.missions?.length || 0;
+                    const completedCountSub = subject.missions?.filter(m => completedMissions[m.id]).length || 0;
+                    const progressSub = totalMissionsSub > 0 ? (completedCountSub / totalMissionsSub) * 100 : 0;
+
+                    return (
+                        <SubjectCard
+                            key={subject.id}
+                            icon={subject.icon}
+                            name={subject.name}
+                            progress={progressSub}
+                            lessonInfo={subject.lessonDay || 'لا يوجد موعد محدد'}
+                            gradient={subject.theme.gradient}
+                            completedCount={completedCountSub}
+                            totalCount={totalMissionsSub}
+                            onClick={() => router.push(`/subject/${subject.id}`)}
+                        />
+                    );
+                })}
             </div>
         </motion.div>
     );
