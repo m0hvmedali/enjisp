@@ -1,92 +1,75 @@
-'use client';
-
 import { motion } from 'framer-motion';
-import { Check, ExternalLink } from 'lucide-react';
-import type { Mission } from '@/types';
+import { Check, Clock, ChevronRight, FileText } from 'lucide-react';
 
 interface MissionCardProps {
-    mission: Mission;
-    accentColor: string;
+    mission: any;
     onToggle: () => void;
     onViewDetails: () => void;
+    accentColor?: string;
 }
 
-export default function MissionCard({
-    mission,
-    accentColor,
-    onToggle,
-    onViewDetails,
-}: MissionCardProps) {
+export default function MissionCard({ mission, onToggle, onViewDetails, accentColor = '#00C853' }: MissionCardProps) {
     return (
         <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            whileHover={{ x: -10, scale: 1.01 }}
+            layout
+            whileHover={{ y: -5 }}
             className={`
-        relative flex items-center gap-6 p-6 rounded-2xl
-        bg-dark-card/80 backdrop-blur-xl border border-white/10
-        hover:bg-dark-card hover:shadow-xl transition-all duration-300
-        group
-      `}
-            style={{ borderRightWidth: '4px', borderRightColor: accentColor }}
+                group relative p-5 rounded-3xl border transition-all duration-300 h-full flex flex-col justify-between
+                ${mission.completed
+                    ? 'bg-organic-green/5 border-organic-green/20'
+                    : 'bg-organic-gray border-white/5 hover:border-organic-green/30 hover:bg-white/5'}
+            `}
         >
-            {/* Checkbox */}
-            <button
-                onClick={onToggle}
-                className={`
-          w-8 h-8 rounded-full border-2 flex items-center justify-center
-          transition-all duration-300 hover:scale-110
-          ${mission.completed
-                        ? 'bg-accent-blue border-accent-blue'
-                        : 'border-gray-500 hover:border-accent-blue'
-                    }
-        `}
-            >
-                {mission.completed && (
-                    <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                    >
-                        <Check className="w-5 h-5 text-white" strokeWidth={3} />
-                    </motion.div>
+            <div className="flex justify-between items-start mb-4">
+                <div
+                    onClick={onToggle}
+                    className={`
+                        w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-300 border
+                        ${mission.completed
+                            ? 'bg-organic-green border-organic-green text-organic-dark shadow-lg shadow-organic-green/20 scale-110'
+                            : 'bg-white/5 border-white/10 hover:border-organic-green/50 text-transparent'}
+                    `}
+                >
+                    <Check size={16} strokeWidth={4} />
+                </div>
+
+                {mission.duration && (
+                    <div className="px-3 py-1 rounded-full bg-white/5 border border-white/5 flex items-center gap-1.5">
+                        <Clock size={12} className={mission.completed ? 'text-organic-green' : 'text-gray-400'} />
+                        <span className={`text-[10px] font-bold font-english ${mission.completed ? 'text-organic-green' : 'text-gray-400'}`}>
+                            {mission.duration}m
+                        </span>
+                    </div>
                 )}
-            </button>
+            </div>
 
-            {/* Content */}
-            <div className="flex-1 min-w-0" onClick={onViewDetails}>
-                <h4 className="text-lg font-bold text-white mb-1 font-arabic cursor-pointer hover:text-accent-blue transition-colors">
+            <div onClick={onViewDetails} className="cursor-pointer flex-1">
+                <h3 className={`font-bold font-arabic text-lg mb-2 leading-relaxed transition-colors ${mission.completed ? 'text-gray-400 line-through decoration-organic-green/50' : 'text-white group-hover:text-organic-green'}`}>
                     {mission.title}
-                </h4>
-                <p className="text-sm text-gray-400 font-arabic">
-                    {mission.content}
-                </p>
+                </h3>
+
+                {/* Micro-preview of content */}
+                {mission.content && (
+                    <p className="text-gray-500 text-xs font-arabic line-clamp-2 mb-4 leading-relaxed">
+                        {mission.content}
+                    </p>
+                )}
             </div>
 
-            {/* Duration */}
-            <div className="text-accent-blue font-bold font-english text-lg whitespace-nowrap">
-                {mission.duration}
+            <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+                <div className="flex items-center gap-2">
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${mission.type === 'video' ? 'bg-red-500/10 text-red-400' : 'bg-blue-500/10 text-blue-400'}`}>
+                        {mission.type === 'video' ? 'فيديو' : 'مذاكرة'}
+                    </span>
+                </div>
+
+                <button
+                    onClick={onViewDetails}
+                    className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-gray-400 group-hover:bg-organic-green group-hover:text-organic-dark transition-all opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0"
+                >
+                    <ChevronRight size={16} />
+                </button>
             </div>
-
-            {/* Action Button */}
-            <button
-                onClick={onViewDetails}
-                className="p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group-hover:scale-110 duration-300"
-            >
-                <ExternalLink className="w-5 h-5 text-gray-400" />
-            </button>
-
-            {/* Completion Overlay */}
-            {mission.completed && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{
-                        opacity: 1,
-                        backgroundColor: ['rgba(16, 185, 129, 0.05)', 'rgba(59, 130, 246, 0.05)', 'rgba(16, 185, 129, 0.05)']
-                    }}
-                    transition={{ duration: 4, repeat: Infinity }}
-                    className="absolute inset-0 rounded-2xl pointer-events-none"
-                />
-            )}
         </motion.div>
     );
 }

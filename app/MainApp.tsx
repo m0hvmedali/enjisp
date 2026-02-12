@@ -30,44 +30,37 @@ export default function MainApp() {
     // --- Entry Screen (Login/Select User) ---
     if (!userName) {
         return (
-            <div className="min-h-screen bg-dark-bg flex flex-col items-center justify-center p-6 relative overflow-hidden">
-                {/* Dynamic Mesh Background */}
-                <div className="absolute inset-0 bg-cosmic-mesh animate-mesh opacity-40" />
-                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-google-blue/20 rounded-full blur-[120px] animate-pulse" />
-                <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-accent-purple/20 rounded-full blur-[120px] animate-pulse" />
-
+            <div className="min-h-screen bg-organic-dark flex flex-col items-center justify-center p-6 relative overflow-hidden">
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="w-full max-w-sm text-center relative z-10"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="w-full max-w-md text-center relative z-10"
                 >
-                    <div className="w-24 h-24 bg-google-blue rounded-3xl mx-auto mb-8 flex items-center justify-center shadow-2xl shadow-google-blue/20 rotate-12 animate-float">
-                        <Sparkles className="text-white w-12 h-12" />
+                    <div className="w-20 h-20 bg-organic-green rounded-2xl mx-auto mb-8 flex items-center justify-center shadow-2xl shadow-organic-green/20">
+                        <Sparkles className="text-white w-10 h-10" />
                     </div>
 
-                    <h1 className="text-4xl font-black font-arabic text-white mb-2 tracking-tight">مين القمر؟ ✨</h1>
-                    <p className="text-gray-400 font-arabic mb-12">اختر ملفك الشخصي للدخول</p>
+                    <h1 className="text-4xl font-black font-arabic text-white mb-4 tracking-tight">مرحباً بكِ في خطة العباقرة</h1>
+                    <p className="text-organic-beige font-arabic mb-12 text-lg opacity-80">نحن لا نخطط للدراسة.. نحن نخطط للمجد 👑</p>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-6">
                         <button
                             onClick={() => setUserName('Mohamed')}
-                            className="bg-dark-card/50 backdrop-blur-xl border border-white/5 p-6 rounded-[2rem] hover:border-google-blue transition-all group relative overflow-hidden"
+                            className="bg-white/5 border border-white/5 hover:border-organic-green/50 p-8 rounded-3xl transition-all group hover:bg-white/10"
                         >
-                            <div className="absolute inset-0 bg-google-blue/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <div className="w-16 h-16 bg-google-blue/20 rounded-2xl mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform relative z-10">
-                                <User className="text-google-blue" />
+                            <div className="w-14 h-14 bg-organic-gray rounded-full mx-auto mb-4 flex items-center justify-center group-hover:bg-organic-green transition-colors">
+                                <User className="text-white w-6 h-6" />
                             </div>
-                            <span className="font-arabic font-bold text-white relative z-10">محمد</span>
+                            <span className="font-arabic font-bold text-white text-lg">محمد</span>
                         </button>
                         <button
                             onClick={() => setUserName('Enji')}
-                            className="bg-dark-card/50 backdrop-blur-xl border border-white/5 p-6 rounded-[2rem] hover:border-accent-pink transition-all group relative overflow-hidden"
+                            className="bg-white/5 border border-white/5 hover:border-organic-pink/50 p-8 rounded-3xl transition-all group hover:bg-white/10"
                         >
-                            <div className="absolute inset-0 bg-accent-pink/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <div className="w-16 h-16 bg-accent-pink/20 rounded-2xl mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform relative z-10">
-                                <Heart className="text-accent-pink" />
+                            <div className="w-14 h-14 bg-organic-gray rounded-full mx-auto mb-4 flex items-center justify-center group-hover:bg-organic-pink transition-colors">
+                                <Heart className="text-white w-6 h-6" />
                             </div>
-                            <span className="font-arabic font-bold text-white relative z-10">إنجي</span>
+                            <span className="font-arabic font-bold text-white text-lg">إنجي</span>
                         </button>
                     </div>
                 </motion.div>
@@ -77,25 +70,24 @@ export default function MainApp() {
 
     // --- Main Logged In App ---
     return (
-        <div className="min-h-screen bg-dark-bg text-white selection:bg-google-blue/30 selection:text-white relative overflow-hidden">
-            <div className="fixed inset-0 bg-cosmic-mesh animate-mesh opacity-30 pointer-events-none" />
-            <div className="fixed top-0 left-0 w-full h-full bg-cosmic-gradient pointer-events-none" />
+        <div className="min-h-screen bg-organic-dark text-white selection:bg-organic-green/30 selection:text-white relative overflow-hidden font-arabic">
 
             <Sidebar />
 
-            <header className="fixed top-0 left-0 right-0 h-20 px-6 flex items-center justify-between z-40 bg-zinc-950/50 backdrop-blur-xl border-b border-white/5">
+            <header className="fixed top-0 left-0 right-0 h-20 px-6 flex items-center justify-between z-40 bg-organic-dark/80 backdrop-blur-xl border-b border-white/5">
                 <div className="flex items-center gap-4">
                     <button
                         onClick={toggleSidebar}
-                        className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-all border border-white/10 group"
+                        className="p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-all border border-white/5 group"
                     >
-                        <Menu size={24} className="text-cine-accent group-hover:scale-110 transition-transform" />
+                        <Menu size={24} className="text-organic-green group-hover:scale-105 transition-transform" />
                     </button>
-                    <h2 className="text-xl font-black font-arabic text-white">إنجي هانم ✨</h2>
+                    <h2 className="text-xl font-black font-arabic text-white tracking-wide">إنجي هانم <span className="text-organic-green">.</span></h2>
                 </div>
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-cine-accent/20 border border-cine-accent/30 flex items-center justify-center animate-shine overflow-hidden">
-                        <Sparkles size={18} className="text-cine-accent animate-pulse" />
+                    <div className="px-4 py-2 bg-organic-green/10 rounded-full border border-organic-green/20 flex items-center gap-2">
+                        <Sparkles size={16} className="text-organic-green" />
+                        <span className="text-xs font-bold text-organic-green">نسخة العباقرة</span>
                     </div>
                 </div>
             </header>
