@@ -8,13 +8,14 @@ import RightPanel from '@/components/RightPanel';
 import MobileNav from '@/components/MobileNav';
 import { Save, Plus, Trash2, Edit3, Link as LinkIcon, ChevronDown, ChevronUp } from 'lucide-react';
 import toast from 'react-hot-toast';
+import CloudSyncControls from '@/components/CloudSyncControls';
 
 export default function SettingsPage() {
     const { studyPlan, updateMission, updateSubject } = useStudyStore();
     const [selectedSubjectId, setSelectedSubjectId] = useState(studyPlan[0]?.id);
     const selectedSubject = studyPlan.find(s => s.id === selectedSubjectId);
 
-    const handleUpdateMission = (missionId: string, field: string, value: string) => {
+    const handleUpdateMission = (missionId: string, field: string, value: any) => {
         if (!selectedSubjectId) return;
         updateMission(selectedSubjectId, missionId, { [field]: value });
         toast.success('تم الحفظ مؤقتاً 💾', { id: missionId });
@@ -28,9 +29,12 @@ export default function SettingsPage() {
                 <MobileNav />
 
                 <div className="max-w-6xl mx-auto p-4 lg:p-8">
-                    <header className="mb-12">
-                        <h1 className="text-4xl font-black font-arabic mb-2">لوحة التحكم السحرية ✨</h1>
-                        <p className="text-gray-400 font-arabic italic text-lg">"عدل على خطتك كما تشاء، لأنك أنت القائد."</p>
+                    <header className="mb-12 flex flex-col md:flex-row justify-between items-start gap-4">
+                        <div>
+                            <h1 className="text-4xl font-black font-arabic mb-2">لوحة التحكم السحرية ✨</h1>
+                            <p className="text-gray-400 font-arabic italic text-lg">"عدل على خطتك كما تشاء، لأنك أنت القائد."</p>
+                        </div>
+                        <CloudSyncControls />
                     </header>
 
                     {/* Subject Tabs */}
@@ -40,8 +44,8 @@ export default function SettingsPage() {
                                 key={s.id}
                                 onClick={() => setSelectedSubjectId(s.id)}
                                 className={`flex items-center gap-2 px-6 py-3 rounded-2xl whitespace-nowrap transition-all duration-300 border ${selectedSubjectId === s.id
-                                        ? 'bg-accent-blue border-accent-blue text-white shadow-xl scale-105'
-                                        : 'bg-dark-card border-white/5 text-gray-400 hover:border-white/20'
+                                    ? 'bg-accent-blue border-accent-blue text-white shadow-xl scale-105'
+                                    : 'bg-dark-card border-white/5 text-gray-400 hover:border-white/20'
                                     }`}
                             >
                                 <span className="text-xl">{s.icon}</span>
@@ -181,7 +185,7 @@ function MissionEditRow({ mission, onUpdate }: { mission: any, onUpdate: (f: str
                                         <input
                                             className="flex-1 bg-dark-bg border border-white/10 rounded-xl p-3 text-sm"
                                             value={mission.links?.notebook || ''}
-                                            onChange={(e) => onUpdate('links', JSON.stringify({ ...mission.links, notebook: e.target.value }))}
+                                            onChange={(e) => onUpdate('links', { ...mission.links, notebook: e.target.value })}
                                             placeholder="https://..."
                                         />
                                     </div>
@@ -193,7 +197,7 @@ function MissionEditRow({ mission, onUpdate }: { mission: any, onUpdate: (f: str
                                         <input
                                             className="flex-1 bg-dark-bg border border-white/10 rounded-xl p-3 text-sm"
                                             value={mission.links?.questions || ''}
-                                            onChange={(e) => onUpdate('links', JSON.stringify({ ...mission.links, questions: e.target.value }))}
+                                            onChange={(e) => onUpdate('links', { ...mission.links, questions: e.target.value })}
                                             placeholder="https://..."
                                         />
                                     </div>
