@@ -9,7 +9,7 @@ import RightPanel from '@/components/RightPanel';
 import MobileNav from '@/components/MobileNav';
 import MissionCard from '@/components/MissionCard';
 import MissionModal from '@/components/MissionModal';
-import { ArrowLeft, Search, Filter, Sparkles, BookOpen } from 'lucide-react';
+import { ArrowLeft, Search, Filter, Sparkles, BookOpen, Maximize2, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import type { Mission } from '@/types';
 
@@ -31,6 +31,7 @@ export default function SubjectPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [filter, setFilter] = useState<'all' | 'completed' | 'incomplete'>('all');
     const [sort, setSort] = useState<'default' | 'duration' | 'title'>('default');
+    const [isImageOpen, setIsImageOpen] = useState(false);
 
     if (!mounted) return <div className="min-h-screen bg-cine-dark" />;
 
@@ -123,7 +124,7 @@ export default function SubjectPage() {
 
     return (
         <div className="flex min-h-screen bg-cine-dark relative overflow-hidden selection:bg-cine-accent selection:text-cine-dark">
-            <div className="fixed inset-0 bg-cosmic-mesh animate-mesh opacity-20 pointer-events-none" />
+            <div className="fixed inset-0 bg-cosmic-mesh animate-mesh opacity-40 pointer-events-none" />
 
             <Sidebar />
 
@@ -131,19 +132,29 @@ export default function SubjectPage() {
                 <MobileNav />
 
                 {/* Cinematic Hero */}
-                <div className="relative h-72 md:h-96 w-full overflow-hidden shadow-2xl">
+                <div
+                    className="relative h-72 md:h-96 w-full overflow-hidden shadow-2xl cursor-pointer group"
+                    onClick={() => setIsImageOpen(true)}
+                >
                     <motion.div
                         initial={{ scale: 1.1, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 0.6 }}
+                        animate={{ scale: 1, opacity: 0.8 }}
                         className="absolute inset-0"
                     >
                         <img
                             src={subject.scheduleImage || 'https://images.unsplash.com/photo-1614728263952-84ea206f99b6?auto=format&fit=crop&q=80'}
                             alt={subject.name}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                         />
                     </motion.div>
-                    <div className={`absolute inset-0 bg-gradient-to-t from-cine-dark via-cine-dark/40 to-transparent`} />
+                    <div className={`absolute inset-0 bg-gradient-to-t from-cine-dark via-cine-dark/10 to-transparent`} />
+
+                    {/* Zoom Hint */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="bg-cine-dark/60 backdrop-blur-xl p-5 rounded-full border border-white/20 scale-90 group-hover:scale-100 transition-transform">
+                            <Maximize2 className="text-cine-accent" size={32} />
+                        </div>
+                    </div>
 
                     <div className="absolute inset-0 flex flex-col justify-end p-8 lg:p-16 max-w-6xl mx-auto w-full">
                         <motion.div
@@ -259,6 +270,35 @@ export default function SubjectPage() {
                 subjectIcon={subject.icon}
                 subjectName={subject.name}
             />
+
+            {/* Image FullScreen Modal */}
+            <AnimatePresence>
+                {isImageOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-3xl flex items-center justify-center p-4 md:p-12"
+                        onClick={() => setIsImageOpen(false)}
+                    >
+                        <button
+                            className="absolute top-8 right-8 text-white hover:text-cine-pink transition-colors p-4 z-[210] bg-white/5 rounded-full"
+                            onClick={(e) => { e.stopPropagation(); setIsImageOpen(false); }}
+                        >
+                            <X size={32} />
+                        </button>
+                        <motion.img
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            src={subject.scheduleImage || 'https://images.unsplash.com/photo-1614728263952-84ea206f99b6?auto=format&fit=crop&q=80'}
+                            alt="Full View"
+                            className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl border border-white/10"
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

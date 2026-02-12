@@ -16,12 +16,12 @@ module.exports = {
                     border: 'rgba(255, 255, 255, 0.08)',
                 },
                 cine: {
-                    dark: '#050505',
-                    card: '#111111',
-                    accent: '#38bdf8', // Blue
-                    pink: '#ef4444',   // Reddish Pink
-                    red: '#ea1c1c',
-                    blue: '#2563eb',
+                    dark: '#020202',
+                    card: '#0a0a0a',
+                    accent: '#00f2ff', // Electric Cyan
+                    pink: '#ff003c',   // Cyber Pink
+                    red: '#ff0000',    // Pure Red
+                    blue: '#0047ff',   // Deep Neon Blue
                 },
                 google: {
                     blue: '#4285F4',
