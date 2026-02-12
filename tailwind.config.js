@@ -8,6 +8,7 @@ module.exports = {
     theme: {
         extend: {
             colors: {
+                border: "rgba(255, 255, 255, 0.1)",
                 dark: {
                     bg: '#020617',
                     card: '#0f172a',
