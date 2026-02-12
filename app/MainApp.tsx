@@ -11,7 +11,7 @@ import WishesTab from '@/components/tabs/WishesTab';
 import VentTab from '@/components/tabs/VentTab';
 import ProfileTab from '@/components/tabs/ProfileTab';
 import SettingsPage from '@/app/settings/page';
-import { User, Sparkles, LogIn } from 'lucide-react';
+import { User, Sparkles, LogIn, Heart } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function MainApp() {

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useStudyStore } from '@/store/useStudyStore';
 import { Home, Calendar, User, Heart, MessageSquare, Settings } from 'lucide-react';
 
-export default function MobileNav({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (t: string) => void }) {
+export default function MobileNav({ activeTab = '', setActiveTab = () => { } }: { activeTab?: string, setActiveTab?: (t: string) => void }) {
     const { userName } = useStudyStore();
 
     const tabs = [
