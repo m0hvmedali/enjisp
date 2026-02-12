@@ -49,7 +49,7 @@ export default function MissionModal({
                             {/* Close Button */}
                             <button
                                 onClick={onClose}
-                                className="absolute top-6 left-6 p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors z-10 border border-white/5"
+                                className="absolute top-6 left-6 p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors z-[100] border border-white/5 cursor-pointer"
                             >
                                 <X className="w-6 h-6 text-gray-400" />
                             </button>

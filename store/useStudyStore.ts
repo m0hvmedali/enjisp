@@ -67,9 +67,32 @@ export const useStudyStore = create<StudyState>()(
             toggleSidebar: () => set((state: StudyState) => ({ isSidebarOpen: !state.isSidebarOpen })),
 
             setUserId: (id: string | null) => set({ userId: id }),
+
             setUserName: (name: 'Mohamed' | 'Enji' | null) => {
                 set({ userName: name, userId: name ? `user_${name.toLowerCase()}` : null });
                 if (name) get().pullFromCloud();
+            },
+
+            // New switchUser action
+            // @ts-ignore - Triggered when switching users to ensure content (links/notes) syncs across accounts
+            switchUser: async (targetUser: 'Mohamed' | 'Enji') => {
+                const currentPlan = get().studyPlan; // Capture current plan (with potential new links)
+                const targetId = `user_${targetUser.toLowerCase()}`;
+
+                // 1. Set new user locally
+                set({ userName: targetUser, userId: targetId });
+
+                // 2. Pull target user's data (progress, wishes, etc.)
+                await get().pullFromCloud();
+
+                // 3. OVERWRITE the pulled plan with the CURRENT plan (to carry over valid links/content)
+                // We keep the *progress* (completedMissions, etc) from the cloud (step 2), 
+                // but enforce the *structure* (links, titles) from the previous session (step 1 capture).
+                set({ studyPlan: currentPlan });
+
+                // 4. Sync this merged state back to the target user's cloud immediately
+                // This ensures the target user now 'has' the updated content
+                await get().syncToCloud();
             },
 
             toggleMission: (missionId: string) => {
@@ -186,6 +209,10 @@ export const useStudyStore = create<StudyState>()(
                     const { data } = await supabase.from('user_plans').select('*').eq('user_id', userId).single();
                     if (data) {
                         const progress = data.progress_data;
+                        // Note: We deliberately do NOT overwrite studyPlan here if we are potentially in a switch-flow
+                        // But strictly speaking, pullFromCloud's job is just to pull.
+                        // The switchUser function handles the overwrite logic after calling this.
+                        // However, standard pullFromCloud (e.g. on load) DOES overwrite plan.
                         set({
                             studyPlan: data.plan_data,
                             completedMissions: progress.completedMissions || {},

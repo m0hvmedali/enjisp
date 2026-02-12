@@ -6,11 +6,15 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useStudyStore } from '@/store/useStudyStore';
 import Link from 'next/link';
 import { Subject } from '@/types';
+import UserSwitchModal from './UserSwitchModal';
+import { useState } from 'react';
 
 export default function Sidebar() {
     const router = useRouter();
     const pathname = usePathname();
     const { studyPlan, userName, isSidebarOpen, toggleSidebar } = useStudyStore();
+
+    const [isUserModalOpen, setIsUserModalOpen] = useState(false);
 
     const menuItems = [
         { icon: Home, label: 'الرئيسية', path: '/', color: 'text-organic-green' },
@@ -25,6 +29,11 @@ export default function Sidebar() {
 
     return (
         <>
+            <UserSwitchModal
+                isOpen={isUserModalOpen}
+                onClose={() => setIsUserModalOpen(false)}
+            />
+
             {/* Backdrop */}
             <AnimatePresence>
                 {isSidebarOpen && (
@@ -90,18 +99,21 @@ export default function Sidebar() {
                 </nav>
 
                 <div className="p-6 bg-organic-gray border-t border-white/5">
-                    <div className="flex items-center gap-4 p-3 rounded-2xl group cursor-pointer hover:bg-white/5 transition-all">
-                        <div className="w-10 h-10 bg-organic-green rounded-full flex items-center justify-center font-black text-organic-dark text-lg shadow-lg">
+                    <button
+                        onClick={() => setIsUserModalOpen(true)}
+                        className="w-full flex items-center gap-4 p-3 rounded-2xl group cursor-pointer hover:bg-white/5 transition-all border border-transparent hover:border-white/5"
+                    >
+                        <div className="w-10 h-10 bg-organic-green rounded-full flex items-center justify-center font-black text-organic-dark text-lg shadow-lg relative overflow-hidden">
                             {userName?.[0] || 'E'}
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 text-right">
                             <h4 className="font-bold font-arabic text-xs text-white mb-1">{userName || 'إنجي'}</h4>
-                            <p className="text-[10px] text-organic-green font-arabic font-bold flex items-center gap-1">
-                                <Zap size={10} /> متصلة الآن
+                            <p className="text-[10px] text-organic-green font-arabic font-bold flex items-center gap-1 justify-end">
+                                <Zap size={10} /> تبديل الحساب
                             </p>
                         </div>
                         <LogOut className="w-4 h-4 text-gray-600 group-hover:text-organic-pink transition-colors" />
-                    </div>
+                    </button>
                 </div>
             </motion.aside>
         </>

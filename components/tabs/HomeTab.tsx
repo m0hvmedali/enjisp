@@ -70,7 +70,7 @@ export default function HomeTab() {
                 >
                     <div className="absolute inset-0 bg-gradient-to-t from-organic-dark via-organic-dark/50 to-transparent z-10" />
                     <img
-                        src="https://images.unsplash.com/photo-1614728263952-84ea206f99b6?auto=format&fit=crop&q=80"
+                        src="/images/subjects/chemistry-schedule.png"
                         className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
                         alt="focus"
                         style={{ filter: 'grayscale(100%)' }} // Start grayscale
