@@ -1,48 +1,69 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Home, Settings, BookOpen, User, Menu } from 'lucide-react';
-import { useRouter, usePathname } from 'next/navigation';
-import Logo from './Logo';
+import { useStudyStore } from '@/store/useStudyStore';
+import { Home, Calendar, User, Heart, MessageSquare, Settings } from 'lucide-react';
 
-export default function MobileNav() {
-    const router = useRouter();
-    const pathname = usePathname();
+export default function MobileNav({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (t: string) => void }) {
+    const { userName } = useStudyStore();
 
-    const navItems = [
-        { icon: Home, path: '/', label: 'الرئيسية' },
-        { icon: Settings, path: '/settings', label: 'الإعدادات' },
-        { icon: User, path: '/profile', label: 'بروفايل' },
+    const tabs = [
+        { id: 'home', icon: Home, label: 'الرئيسية' },
+        { id: 'schedule', icon: Calendar, label: 'الجدول' },
+        { id: 'wishes', icon: Heart, label: 'الأهداف' },
+        { id: 'vent', icon: MessageSquare, label: 'تفريغ' },
+        { id: 'profile', icon: User, label: 'بروفايل' },
     ];
 
-    return (
-        <>
-            {/* Mobile Top Header */}
-            <div className="lg:hidden flex items-center justify-between p-4 bg-dark-card/50 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
-                <Logo />
-                <button className="p-2 bg-white/5 rounded-xl">
-                    <Menu className="w-6 h-6 text-gray-400" />
-                </button>
-            </div>
+    // Only show settings if Mohamed is logged in
+    if (userName === 'Mohamed') {
+        tabs.push({ id: 'settings', icon: Settings, label: 'إعدادات' });
+    }
 
-            {/* Mobile Bottom Bar */}
-            <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-dark-card/80 backdrop-blur-2xl border-t border-white/10 flex items-center justify-around px-4 z-50">
-                {navItems.map((item) => {
-                    const isActive = pathname === item.path;
+    return (
+        <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-lg z-50">
+            <div className="bg-dark-card/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-2 shadow-2xl flex items-center justify-between">
+                {tabs.map((tab) => {
+                    const Icon = tab.icon;
+                    const isActive = activeTab === tab.id;
+
                     return (
                         <button
-                            key={item.path}
-                            onClick={() => router.push(item.path)}
-                            className="flex flex-col items-center justify-center gap-1 group"
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className="relative flex-1 flex flex-col items-center py-2 transition-all duration-300"
                         >
-                            <div className={`p-2 rounded-xl transition-all duration-300 ${isActive ? 'bg-accent-blue text-white shadow-lg shadow-accent-blue/30 scale-110' : 'text-gray-500 hover:bg-white/5'}`}>
-                                <item.icon className="w-5 h-5" />
-                            </div>
-                            <span className={`text-[10px] font-arabic ${isActive ? 'text-white' : 'text-gray-500'}`}>{item.label}</span>
+                            <motion.div
+                                animate={{
+                                    scale: isActive ? 1.2 : 1,
+                                    color: isActive ? '#3b82f6' : '#64748b'
+                                }}
+                                className="z-10"
+                            >
+                                <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
+                            </motion.div>
+
+                            <motion.span
+                                animate={{
+                                    opacity: isActive ? 1 : 0,
+                                    y: isActive ? 0 : 5
+                                }}
+                                className="text-[10px] font-arabic font-bold mt-1 text-accent-blue"
+                            >
+                                {tab.label}
+                            </motion.span>
+
+                            {isActive && (
+                                <motion.div
+                                    layoutId="activeTab"
+                                    className="absolute inset-0 bg-accent-blue/10 rounded-2xl mx-1"
+                                    transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                                />
+                            )}
                         </button>
                     );
                 })}
             </div>
-        </>
+        </nav>
     );
 }
