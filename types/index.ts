@@ -16,17 +16,37 @@ export interface Subject {
     created_at?: string;
 }
 
-export interface Mission {
+export interface Unit {
     id: string;
     subject_id: string;
     title: string;
+    order: number;
+    created_at?: string;
+    missions?: Mission[]; // For flexible fetching
+}
+
+export interface Mission {
+    id: string;
+    subject_id: string;
+    unit_id?: string | null;
+    title: string;
     description: string | null;
-    is_completed: boolean;
+    status: 'pending' | 'in-progress' | 'completed';
+    priority: 'low' | 'medium' | 'high';
+    is_completed: boolean; // Keep for backward compatibility or computed
     progress: number; // 0-100
     notebook_link: string | null;
     archive_link: string | null;
+    deadline?: string | null;
+    estimated_time?: number | null; // minutes
+    actual_time?: number | null; // minutes
     type: 'study' | 'solve' | 'revision';
     created_at?: string;
+}
+
+export interface SubjectWithUnits extends Subject {
+    units: Unit[];
+    missions: Mission[]; // Direct missions (orphaned) or all missions flat
 }
 
 export interface VentLog {

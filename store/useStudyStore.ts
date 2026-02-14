@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 import { supabase } from '@/lib/supabase';
-import { Profile, SubjectWithMissions, Wish, VentLog, Mission } from '@/types';
+import { Profile, SubjectWithUnits, Wish, VentLog, Mission } from '@/types';
 import toast from 'react-hot-toast';
 
 interface StudyState {
     user: Profile | null;
-    subjects: SubjectWithMissions[];
+    subjects: SubjectWithUnits[];
     wishes: Wish[];
     ventLogs: VentLog[];
     isLoading: boolean;
@@ -13,12 +13,17 @@ interface StudyState {
     // Actions
     fetchUser: (userId: string) => Promise<void>;
     setUser: (profile: Profile | null) => void;
-
     fetchPlan: () => Promise<void>;
 
     // Mission Actions
     toggleMission: (missionId: string, currentStatus: boolean, currentProgress: number) => Promise<void>;
     updateMissionProgress: (missionId: string, progress: number) => Promise<void>;
+
+    // Admin Actions (V2)
+    createSubject: (name: string, day: string, icon: string) => Promise<void>;
+    createUnit: (subjectId: string, title: string, order: number) => Promise<void>;
+    createMission: (mission: Partial<Mission>) => Promise<void>;
+    deleteItem: (table: 'subjects' | 'units' | 'missions', id: string) => Promise<void>;
 
     // Wish Actions
     fetchWishes: () => Promise<void>;
@@ -27,10 +32,6 @@ interface StudyState {
 
     // Vent Actions
     addVent: (content: string) => Promise<void>;
-
-    // Realtime Subscriptions
-    subscribeToChanges: () => void;
-    unsubscribe: () => void;
 }
 
 export const useStudyStore = create<StudyState>((set, get) => ({
@@ -44,161 +45,92 @@ export const useStudyStore = create<StudyState>((set, get) => ({
 
     fetchUser: async (userId) => {
         set({ isLoading: true });
-        const { data, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', userId)
-            .single();
-
-        if (error) {
-            console.error('Error fetching user:', error);
-            set({ user: null, isLoading: false });
-            return;
-        }
-
+        const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+        if (error) { set({ user: null, isLoading: false }); return; }
         set({ user: data as Profile, isLoading: false });
-        // Fetch data after user is set
         get().fetchPlan();
         get().fetchWishes();
     },
 
     fetchPlan: async () => {
-        const { data: subjects, error: subjError } = await supabase
-            .from('subjects')
-            .select('*')
-            .order('name'); // Or order by day
+        const { data: subjects } = await supabase.from('subjects').select('*').order('name');
+        const { data: units } = await supabase.from('units').select('*').order('order');
+        const { data: missions } = await supabase.from('missions').select('*');
 
-        if (subjError) {
-            console.error('Error fetching subjects:', subjError);
-            return;
-        }
+        if (!subjects) return;
 
-        const { data: missions, error: missError } = await supabase
-            .from('missions')
-            .select('*');
+        const mergedSubjects: SubjectWithUnits[] = subjects.map(sub => {
+            const subUnits = (units || []).filter(u => u.subject_id === sub.id);
+            const subMissions = (missions || []).filter(m => m.subject_id === sub.id);
 
-        if (missError) {
-            console.error('Error fetching missions:', missError);
-            return;
-        }
-
-        // Merge logic
-        const mergedSubjects: SubjectWithMissions[] = subjects.map(sub => ({
-            ...sub,
-            missions: missions.filter(m => m.subject_id === sub.id)
-        }));
-
+            return {
+                ...sub,
+                units: subUnits.map(u => ({ ...u })),
+                missions: subMissions
+            };
+        });
         set({ subjects: mergedSubjects });
     },
 
     toggleMission: async (missionId, currentStatus, currentProgress) => {
-        // Optimistic update
         const newStatus = !currentStatus;
         const newProgress = newStatus ? 100 : (currentProgress === 100 ? 0 : currentProgress);
-
+        // Optimistic
         set(state => ({
             subjects: state.subjects.map(sub => ({
                 ...sub,
-                missions: sub.missions.map(m =>
-                    m.id === missionId ? { ...m, is_completed: newStatus, progress: newProgress } : m
-                )
+                missions: sub.missions.map(m => m.id === missionId ? { ...m, is_completed: newStatus, progress: newProgress } : m)
             }))
         }));
-
-        const { error } = await supabase
-            .from('missions')
-            .update({ is_completed: newStatus, progress: newProgress })
-            .eq('id', missionId);
-
-        if (error) {
-            toast.error('Failed to update mission');
-            get().fetchPlan(); // Revert
-        }
+        await supabase.from('missions').update({ is_completed: newStatus, progress: newProgress }).eq('id', missionId);
     },
 
     updateMissionProgress: async (missionId, progress) => {
+        const isCompleted = progress === 100;
         set(state => ({
             subjects: state.subjects.map(sub => ({
                 ...sub,
-                missions: sub.missions.map(m =>
-                    m.id === missionId ? { ...m, progress: progress, is_completed: progress === 100 } : m
-                )
+                missions: sub.missions.map(m => m.id === missionId ? { ...m, progress, is_completed: isCompleted } : m)
             }))
         }));
+        await supabase.from('missions').update({ progress, is_completed: isCompleted }).eq('id', missionId);
+    },
 
-        const { error } = await supabase
-            .from('missions')
-            .update({ progress: progress, is_completed: progress === 100 })
-            .eq('id', missionId);
-
-        if (error) toast.error('Failed to update progress');
+    createSubject: async (name, day, icon) => {
+        await supabase.from('subjects').insert({ name, day_of_week: day });
+        get().fetchPlan();
+    },
+    createUnit: async (subjectId, title, order) => {
+        await supabase.from('units').insert({ subject_id: subjectId, title, order });
+        get().fetchPlan();
+    },
+    createMission: async (mission) => {
+        await supabase.from('missions').insert(mission);
+        get().fetchPlan();
+    },
+    deleteItem: async (table, id) => {
+        await supabase.from(table).delete().eq('id', id);
+        get().fetchPlan();
     },
 
     fetchWishes: async () => {
         const user = get().user;
         if (!user) return;
-
-        const { data, error } = await supabase
-            .from('wishes')
-            .select('*')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false });
-
+        const { data } = await supabase.from('wishes').select('*').eq('user_id', user.id);
         if (data) set({ wishes: data });
     },
-
     addWish: async (title, date) => {
         const user = get().user;
         if (!user) return;
-
-        const { data, error } = await supabase
-            .from('wishes')
-            .insert({ user_id: user.id, title, week_start_date: date })
-            .select()
-            .single();
-
-        if (data) {
-            set(state => ({ wishes: [data, ...state.wishes] }));
-            toast.success('Wish added successfully');
-        }
+        const { data } = await supabase.from('wishes').insert({ user_id: user.id, title, week_start_date: date }).select().single();
+        if (data) set(state => ({ wishes: [data, ...state.wishes] }));
     },
-
     toggleWish: async (id, currentStatus) => {
-        set(state => ({
-            wishes: state.wishes.map(w => w.id === id ? { ...w, completed: !currentStatus } : w)
-        }));
-
+        set(state => ({ wishes: state.wishes.map(w => w.id === id ? { ...w, completed: !currentStatus } : w) }));
         await supabase.from('wishes').update({ completed: !currentStatus }).eq('id', id);
     },
-
     addVent: async (content) => {
         const user = get().user;
-        // Venting doesn't strictly require a user if we want anonymous venting, but schema says user_id is nullable.
-        // If we want to capture history for Mohamed, we should send ID.
-
-        const { error } = await supabase
-            .from('venting_logs')
-            .insert({ user_id: user?.id || null, content });
-
-        if (!error) {
-            toast.success('Dissolved into the void...', { icon: '🍃' });
-        }
-    },
-
-    subscribeToChanges: () => {
-        const channels = [
-            supabase.channel('public:missions').on('postgres_changes', { event: '*', schema: 'public', table: 'missions' }, () => {
-                get().fetchPlan();
-            }).subscribe(),
-            supabase.channel('public:wishes').on('postgres_changes', { event: '*', schema: 'public', table: 'wishes' }, () => {
-                get().fetchWishes();
-            }).subscribe()
-        ];
-
-        // Store channels to unsubscribe later if needed, or just rely on global singleton in simple app
-    },
-
-    unsubscribe: () => {
-        supabase.removeAllChannels();
+        await supabase.from('venting_logs').insert({ user_id: user?.id, content });
     }
 }));

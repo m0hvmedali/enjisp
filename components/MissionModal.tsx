@@ -1,8 +1,8 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, CheckCircle, Circle, ExternalLink, Book, Archive } from 'lucide-react';
 import { Mission } from '@/types';
+import { X, CheckCircle, Circle, Link as LinkIcon, Youtube, FileText, Clock, AlertCircle } from 'lucide-react';
 import { useStudyStore } from '@/store/useStudyStore';
 
 interface MissionModalProps {
@@ -17,100 +17,72 @@ export default function MissionModal({ mission, onClose }: MissionModalProps) {
 
     const handleToggle = () => {
         toggleMission(mission.id, mission.is_completed, mission.progress);
+        if (!mission.is_completed) onClose();
     };
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            >
+                {/* Backdrop */}
+                <div
+                    className="absolute inset-0 bg-black/80 backdrop-blur-sm"
                     onClick={onClose}
-                    className="absolute inset-0 bg-black/60 backdrop-blur-sm"
                 />
 
+                {/* Modal Content */}
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                    className="relative w-full max-w-lg bg-organic-dark border border-organic-border/20 rounded-3xl p-6 shadow-2xl overflow-hidden font-arabic"
+                    layoutId={`mission-${mission.id}`}
+                    initial={{ scale: 0.9, y: 20 }}
+                    animate={{ scale: 1, y: 0 }}
+                    exit={{ scale: 0.9, y: 20 }}
+                    className="relative w-full max-w-lg bg-organic-dark rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
                 >
-                    {/* Cinematic Glow */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-organic-green/10 rounded-full blur-3xl -mr-16 -mt-16" />
+                    {/* Header */}
+                    <div className="relative h-32 bg-gradient-to-br from-organic-green/20 to-organic-dark">
+                        <button
+                            onClick={onClose}
+                            className="absolute top-4 right-4 p-2 bg-black/20 rounded-full hover:bg-black/40 transition-colors z-10"
+                        >
+                            <X size={20} className="text-white" />
+                        </button>
 
-                    <button
-                        onClick={onClose}
-                        className="absolute top-4 left-4 p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
-                    >
-                        <X size={20} className="text-organic-border" />
-                    </button>
-
-                    <div className="mt-2 mb-6">
-                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-3 ${mission.type === 'study' ? 'bg-blue-500/20 text-blue-400' :
-                                mission.type === 'solve' ? 'bg-organic-pink/20 text-organic-pink' :
-                                    'bg-yellow-500/20 text-yellow-400'
-                            }`}>
-                            {mission.type === 'study' ? 'مذاكرة' : mission.type === 'solve' ? 'حل' : 'مراجعة'}
-                        </span>
-                        <h2 className="text-2xl font-bold text-white leading-tight">{mission.title}</h2>
-                        {mission.description && (
-                            <p className="text-organic-border mt-2 text-sm leading-relaxed">{mission.description}</p>
-                        )}
-                    </div>
-
-                    <div className="space-y-4 mb-8">
-                        {/* Links */}
-                        <div className="grid grid-cols-2 gap-3">
-                            {mission.notebook_link && (
-                                <a
-                                    href={mission.notebook_link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center gap-2 p-3 rounded-xl bg-organic-gray/50 hover:bg-organic-gray border border-organic-border/20 transition-all group"
-                                >
-                                    <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-colors">
-                                        <Book size={18} />
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <span className="text-xs text-organic-border font-bold">NotebookLM</span>
-                                        <span className="text-[10px] text-organic-border/50">ملخص & محادثة</span>
-                                    </div>
-                                </a>
-                            )}
-
-                            {mission.archive_link && (
-                                <a
-                                    href={mission.archive_link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center gap-2 p-3 rounded-xl bg-organic-gray/50 hover:bg-organic-gray border border-organic-border/20 transition-all group"
-                                >
-                                    <div className="p-2 rounded-lg bg-yellow-500/10 text-yellow-500 group-hover:bg-yellow-500 group-hover:text-black transition-colors">
-                                        <Archive size={18} />
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <span className="text-xs text-organic-border font-bold">Questions Archive</span>
-                                        <span className="text-[10px] text-organic-border/50">أسئلة سنوات سابقة</span>
-                                    </div>
-                                </a>
-                            )}
+                        <div className="absolute bottom-6 left-6 right-6">
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full border ${mission.priority === 'high' ? 'border-red-500 text-red-400 bg-red-500/10' :
+                                        mission.priority === 'medium' ? 'border-yellow-500 text-yellow-400 bg-yellow-500/10' :
+                                            'border-blue-500 text-blue-400 bg-blue-500/10'
+                                    }`}>
+                                    {mission.priority} Priority
+                                </span>
+                                {mission.deadline && (
+                                    <span className="text-[10px] text-organic-border flex items-center gap-1">
+                                        <Clock size={10} /> Due: {new Date(mission.deadline).toLocaleDateString()}
+                                    </span>
+                                )}
+                            </div>
+                            <h2 className="text-2xl font-bold text-white leading-tight">{mission.title}</h2>
                         </div>
                     </div>
 
-                    {/* Progress Action */}
-                    <div className="flex items-center gap-4">
+                    {/* Body */}
+                    <div className="p-6 space-y-6">
+                        {/* Status Action */}
                         <button
                             onClick={handleToggle}
-                            className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-xl font-bold text-lg transition-all ${mission.is_completed
-                                    ? 'bg-organic-green text-black shadow-[0_0_20px_rgba(0,200,83,0.3)]'
-                                    : 'bg-organic-gray border border-organic-border/30 hover:border-organic-green hover:text-organic-green'
+                            className={`w-full py-4 rounded-xl flex items-center justify-center gap-3 font-bold text-lg transition-all ${mission.is_completed
+                                    ? 'bg-organic-green/10 text-organic-green border border-organic-green/20'
+                                    : 'bg-white/5 text-white border border-white/10 hover:bg-white/10'
                                 }`}
                         >
                             {mission.is_completed ? (
                                 <>
                                     <CheckCircle size={24} />
-                                    <span>تم الإنجاز!</span>
+                                    <span>مكتمل! عظيم يا بطل 🌟</span>
                                 </>
                             ) : (
                                 <>
@@ -119,9 +91,77 @@ export default function MissionModal({ mission, onClose }: MissionModalProps) {
                                 </>
                             )}
                         </button>
+
+                        {/* Description */}
+                        {mission.description && (
+                            <div className="bg-black/20 p-4 rounded-xl border border-white/5">
+                                <p className="text-organic-beige/80 text-sm leading-relaxed whitespace-pre-wrap">
+                                    {mission.description}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Resources & Links */}
+                        <div className="space-y-3">
+                            <h3 className="text-sm font-bold text-organic-border uppercase tracking-widest">Resources</h3>
+
+                            {mission.notebook_link && (
+                                <a
+                                    href={mission.notebook_link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-3 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-300 hover:bg-blue-500/20 transition-colors"
+                                >
+                                    <div className="bg-blue-500/20 p-2 rounded-full"><LinkIcon size={16} /></div>
+                                    <div className="flex-1">
+                                        <span className="block font-bold text-sm">NotebookLM Brief</span>
+                                        <span className="text-xs opacity-70">AI Summary & Audio</span>
+                                    </div>
+                                    <ChevronRight size={16} />
+                                </a>
+                            )}
+
+                            {/* Assuming YouTube link might be in description or a future field, mocking generic external link for now if exists */}
+                            {/* Previous Years / Archive */}
+                            {mission.archive_link && (
+                                <a
+                                    href={mission.archive_link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-3 p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-300 hover:bg-purple-500/20 transition-colors"
+                                >
+                                    <div className="bg-purple-500/20 p-2 rounded-full"><FileText size={16} /></div>
+                                    <div className="flex-1">
+                                        <span className="block font-bold text-sm">Previous Year Questions</span>
+                                        <span className="text-xs opacity-70">Archive & Past Exams</span>
+                                    </div>
+                                    <ChevronRight size={16} />
+                                </a>
+                            )}
+
+                            {/* Fallback if no links */}
+                            {!mission.notebook_link && !mission.archive_link && (
+                                <div className="text-center py-4 bg-white/5 rounded-xl border border-white/5 border-dashed">
+                                    <p className="text-gray-500 text-sm">No attached resources.</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs text-gray-500">
+                            <span>Type: <span className="text-gray-300 uppercase">{mission.type}</span></span>
+                            <span>Est: {mission.estimated_time || '--'} min</span>
+                        </div>
                     </div>
                 </motion.div>
-            </div>
+            </motion.div>
         </AnimatePresence>
     );
+}
+
+function ChevronRight({ size }: { size: number }) {
+    return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+    )
 }
