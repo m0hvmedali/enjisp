@@ -22,7 +22,6 @@ export async function getDailyWisdom() {
 
     try {
         // 1. Check if we already have wisdom for today in DB to save API calls
-        const supabase = createClient();
         const today = new Date().toISOString().split('T')[0];
 
         // This part requires `created_at` or `shown_date` check. 
