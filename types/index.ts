@@ -13,6 +13,7 @@ export interface Subject {
     name: string;
     day_of_week: string | null; // e.g. 'Monday'
     image_url: string | null; // Cinematic background
+    icon: string | null;
     created_at?: string;
 }
 
