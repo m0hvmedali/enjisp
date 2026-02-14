@@ -2,6 +2,8 @@ import '@/styles/globals.css'
 import type { Metadata, Viewport } from 'next'
 import { Tajawal, Outfit } from 'next/font/google'
 import { Toaster } from 'react-hot-toast'
+import EntryGate from '@/components/EntryGate';
+import BottomNav from '@/components/BottomNav';
 
 const tajawal = Tajawal({
     weight: ['300', '400', '700', '900'],
@@ -27,7 +29,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-    themeColor: '#020617',
+    themeColor: '#050505',
     width: 'device-width',
     initialScale: 1,
     maximumScale: 1,
@@ -41,14 +43,14 @@ export default function RootLayout({
 }) {
     return (
         <html lang="ar" dir="rtl" className={`${tajawal.variable} ${outfit.variable}`}>
-            <body className="bg-dark-bg text-white antialiased overflow-x-hidden selection:bg-accent-blue/30 selection:text-white">
+            <body className="bg-organic-dark text-white antialiased overflow-x-hidden selection:bg-organic-green/30 selection:text-white pb-24 md:pb-0">
                 <Toaster
                     position="bottom-left"
                     toastOptions={{
                         duration: 4000,
                         style: {
-                            background: 'rgba(15, 23, 42, 0.9)',
-                            color: '#fff',
+                            background: 'rgba(18, 18, 18, 0.9)',
+                            color: '#F0E6D2',
                             border: '1px solid rgba(255, 255, 255, 0.1)',
                             backdropFilter: 'blur(10px)',
                             borderRadius: '20px',
@@ -58,7 +60,11 @@ export default function RootLayout({
                         },
                     }}
                 />
-                {children}
+                <EntryGate />
+                <main className="min-h-screen relative z-0">
+                    {children}
+                </main>
+                <BottomNav />
             </body>
         </html>
     )

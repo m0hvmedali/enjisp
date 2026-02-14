@@ -1,233 +1,204 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { Subject, Mission } from '@/types';
-import { studyData as initialData } from '@/data/studyData';
 import { supabase } from '@/lib/supabase';
-
-interface Wish {
-    id: string;
-    text: string;
-    completed: boolean;
-    createdAt: string;
-}
-
-interface VentLog {
-    id: string;
-    text: string;
-    createdAt: string;
-    mood: string;
-}
-
-interface TimelineEvent {
-    id: string;
-    title: string;
-    type: 'mission' | 'wish' | 'vent';
-    createdAt: string;
-}
+import { Profile, SubjectWithMissions, Wish, VentLog, Mission } from '@/types';
+import toast from 'react-hot-toast';
 
 interface StudyState {
-    studyPlan: Subject[];
-    completedMissions: Record<string, boolean>;
-    userId: string | null;
-    userName: 'Mohamed' | 'Enji' | null;
+    user: Profile | null;
+    subjects: SubjectWithMissions[];
     wishes: Wish[];
     ventLogs: VentLog[];
-    timeline: TimelineEvent[];
-    isSidebarOpen: boolean;
+    isLoading: boolean;
 
     // Actions
-    toggleSidebar: () => void;
-    setUserId: (id: string | null) => void;
-    setUserName: (name: 'Mohamed' | 'Enji' | null) => void;
-    toggleMission: (missionId: string) => void;
-    updateMission: (subjectId: string, missionId: string, updates: Partial<Mission>) => void;
-    updateSubject: (subjectId: string, updates: Partial<Subject>) => void;
-    addWish: (text: string) => void;
-    toggleWish: (id: string) => void;
-    addVent: (text: string, mood: string) => void;
-    resetPlan: () => void;
+    fetchUser: (userId: string) => Promise<void>;
+    setUser: (profile: Profile | null) => void;
 
-    // Cloud Sync
-    syncToCloud: () => Promise<void>;
-    pullFromCloud: () => Promise<void>;
+    fetchPlan: () => Promise<void>;
+
+    // Mission Actions
+    toggleMission: (missionId: string, currentStatus: boolean, currentProgress: number) => Promise<void>;
+    updateMissionProgress: (missionId: string, progress: number) => Promise<void>;
+
+    // Wish Actions
+    fetchWishes: () => Promise<void>;
+    addWish: (title: string, date: string) => Promise<void>;
+    toggleWish: (id: string, currentStatus: boolean) => Promise<void>;
+
+    // Vent Actions
+    addVent: (content: string) => Promise<void>;
+
+    // Realtime Subscriptions
+    subscribeToChanges: () => void;
+    unsubscribe: () => void;
 }
 
-export const useStudyStore = create<StudyState>()(
-    persist(
-        (set, get) => ({
-            studyPlan: initialData,
-            completedMissions: {},
-            userId: null,
-            userName: null,
-            wishes: [],
-            ventLogs: [],
-            timeline: [],
-            isSidebarOpen: false,
+export const useStudyStore = create<StudyState>((set, get) => ({
+    user: null,
+    subjects: [],
+    wishes: [],
+    ventLogs: [],
+    isLoading: false,
 
-            toggleSidebar: () => set((state: StudyState) => ({ isSidebarOpen: !state.isSidebarOpen })),
+    setUser: (profile) => set({ user: profile }),
 
-            setUserId: (id: string | null) => set({ userId: id }),
+    fetchUser: async (userId) => {
+        set({ isLoading: true });
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', userId)
+            .single();
 
-            setUserName: (name: 'Mohamed' | 'Enji' | null) => {
-                set({ userName: name, userId: name ? `user_${name.toLowerCase()}` : null });
-                if (name) get().pullFromCloud();
-            },
-
-            // New switchUser action
-            // @ts-ignore - Triggered when switching users to ensure content (links/notes) syncs across accounts
-            switchUser: async (targetUser: 'Mohamed' | 'Enji') => {
-                const currentPlan = get().studyPlan; // Capture current plan (with potential new links)
-                const targetId = `user_${targetUser.toLowerCase()}`;
-
-                // 1. Set new user locally
-                set({ userName: targetUser, userId: targetId });
-
-                // 2. Pull target user's data (progress, wishes, etc.)
-                await get().pullFromCloud();
-
-                // 3. OVERWRITE the pulled plan with the CURRENT plan (to carry over valid links/content)
-                // We keep the *progress* (completedMissions, etc) from the cloud (step 2), 
-                // but enforce the *structure* (links, titles) from the previous session (step 1 capture).
-                set({ studyPlan: currentPlan });
-
-                // 4. Sync this merged state back to the target user's cloud immediately
-                // This ensures the target user now 'has' the updated content
-                await get().syncToCloud();
-            },
-
-            toggleMission: (missionId: string) => {
-                set((state: StudyState) => {
-                    const newCompleted = {
-                        ...state.completedMissions,
-                        [missionId]: !state.completedMissions[missionId],
-                    };
-
-                    // Add to timeline if completing
-                    let newTimeline = [...state.timeline];
-                    if (!state.completedMissions[missionId]) {
-                        newTimeline.unshift({
-                            id: Math.random().toString(36).substr(2, 9),
-                            title: `أكملت مهمة دراسية بنجاح! 🎉`,
-                            type: 'mission' as const,
-                            createdAt: new Date().toISOString()
-                        });
-                    }
-
-                    setTimeout(() => get().syncToCloud(), 1000);
-                    return { completedMissions: newCompleted, timeline: newTimeline.slice(0, 50) };
-                });
-            },
-
-            addWish: (text: string) => {
-                set((state: StudyState) => ({
-                    wishes: [
-                        { id: Math.random().toString(36).substr(2, 9), text, completed: false, createdAt: new Date().toISOString() },
-                        ...state.wishes
-                    ]
-                }));
-                get().syncToCloud();
-            },
-
-            toggleWish: (id: string) => {
-                set((state: StudyState) => ({
-                    wishes: state.wishes.map(w => w.id === id ? { ...w, completed: !w.completed } : w)
-                }));
-                get().syncToCloud();
-            },
-
-            addVent: (text: string, mood: string) => {
-                set((state: StudyState) => ({
-                    ventLogs: [
-                        { id: Math.random().toString(36).substr(2, 9), text, mood, createdAt: new Date().toISOString() },
-                        ...state.ventLogs
-                    ],
-                    timeline: [
-                        { id: Math.random().toString(36).substr(2, 9), title: `فرغت عما بداخلي.. أشعر بـ ${mood}`, type: 'vent' as const, createdAt: new Date().toISOString() },
-                        ...state.timeline
-                    ].slice(0, 50)
-                }));
-                get().syncToCloud();
-            },
-
-            updateMission: (subjectId: string, missionId: string, updates: Partial<Mission>) => {
-                set((state: StudyState) => {
-                    const newPlan = state.studyPlan.map((sub: Subject) => {
-                        if (sub.id !== subjectId) return sub;
-                        let updatedSub = { ...sub };
-                        // Handle direct missions
-                        if (updatedSub.missions) {
-                            updatedSub.missions = updatedSub.missions.map(m => m.id === missionId ? { ...m, ...updates } : m);
-                        }
-                        // Handle units
-                        if (updatedSub.units) {
-                            updatedSub.units = updatedSub.units.map(u => ({
-                                ...u,
-                                missions: u.missions.map(m => m.id === missionId ? { ...m, ...updates } : m)
-                            }));
-                        }
-                        // Handle sections
-                        if (updatedSub.sections) {
-                            updatedSub.sections = updatedSub.sections.map(s => ({
-                                ...s,
-                                missions: s.missions.map(m => m.id === missionId ? { ...m, ...updates } : m)
-                            }));
-                        }
-                        return updatedSub;
-                    });
-                    setTimeout(() => get().syncToCloud(), 1000);
-                    return { studyPlan: newPlan };
-                });
-            },
-
-            updateSubject: (subjectId: string, updates: Partial<Subject>) => {
-                set((state: StudyState) => {
-                    const newPlan = state.studyPlan.map((sub: Subject) => sub.id === subjectId ? { ...sub, ...updates } : sub);
-                    setTimeout(() => get().syncToCloud(), 1000);
-                    return { studyPlan: newPlan };
-                });
-            },
-
-            resetPlan: () => set({ studyPlan: initialData, completedMissions: {}, wishes: [], ventLogs: [], timeline: [] }),
-
-            syncToCloud: async () => {
-                const { userId, studyPlan, completedMissions, wishes, ventLogs, timeline, userName } = get();
-                if (!userId) return;
-                try {
-                    await supabase.from('user_plans').upsert({
-                        user_id: userId,
-                        plan_data: studyPlan,
-                        progress_data: { completedMissions, wishes, ventLogs, timeline, userName },
-                        updated_at: new Date().toISOString()
-                    }, { onConflict: 'user_id' });
-                } catch (err) { console.error(err); }
-            },
-
-            pullFromCloud: async () => {
-                const { userId } = get();
-                if (!userId) return;
-                try {
-                    const { data } = await supabase.from('user_plans').select('*').eq('user_id', userId).single();
-                    if (data) {
-                        const progress = data.progress_data;
-                        // Note: We deliberately do NOT overwrite studyPlan here if we are potentially in a switch-flow
-                        // But strictly speaking, pullFromCloud's job is just to pull.
-                        // The switchUser function handles the overwrite logic after calling this.
-                        // However, standard pullFromCloud (e.g. on load) DOES overwrite plan.
-                        set({
-                            studyPlan: data.plan_data,
-                            completedMissions: progress.completedMissions || {},
-                            wishes: progress.wishes || [],
-                            ventLogs: progress.ventLogs || [],
-                            timeline: progress.timeline || [],
-                            userName: progress.userName || null
-                        });
-                    }
-                } catch (err) { console.error(err); }
-            }
-        }),
-        {
-            name: 'enji-v4-google-storage',
-            storage: createJSONStorage(() => localStorage),
+        if (error) {
+            console.error('Error fetching user:', error);
+            set({ user: null, isLoading: false });
+            return;
         }
-    )
-);
+
+        set({ user: data as Profile, isLoading: false });
+        // Fetch data after user is set
+        get().fetchPlan();
+        get().fetchWishes();
+    },
+
+    fetchPlan: async () => {
+        const { data: subjects, error: subjError } = await supabase
+            .from('subjects')
+            .select('*')
+            .order('name'); // Or order by day
+
+        if (subjError) {
+            console.error('Error fetching subjects:', subjError);
+            return;
+        }
+
+        const { data: missions, error: missError } = await supabase
+            .from('missions')
+            .select('*');
+
+        if (missError) {
+            console.error('Error fetching missions:', missError);
+            return;
+        }
+
+        // Merge logic
+        const mergedSubjects: SubjectWithMissions[] = subjects.map(sub => ({
+            ...sub,
+            missions: missions.filter(m => m.subject_id === sub.id)
+        }));
+
+        set({ subjects: mergedSubjects });
+    },
+
+    toggleMission: async (missionId, currentStatus, currentProgress) => {
+        // Optimistic update
+        const newStatus = !currentStatus;
+        const newProgress = newStatus ? 100 : (currentProgress === 100 ? 0 : currentProgress);
+
+        set(state => ({
+            subjects: state.subjects.map(sub => ({
+                ...sub,
+                missions: sub.missions.map(m =>
+                    m.id === missionId ? { ...m, is_completed: newStatus, progress: newProgress } : m
+                )
+            }))
+        }));
+
+        const { error } = await supabase
+            .from('missions')
+            .update({ is_completed: newStatus, progress: newProgress })
+            .eq('id', missionId);
+
+        if (error) {
+            toast.error('Failed to update mission');
+            get().fetchPlan(); // Revert
+        }
+    },
+
+    updateMissionProgress: async (missionId, progress) => {
+        set(state => ({
+            subjects: state.subjects.map(sub => ({
+                ...sub,
+                missions: sub.missions.map(m =>
+                    m.id === missionId ? { ...m, progress: progress, is_completed: progress === 100 } : m
+                )
+            }))
+        }));
+
+        const { error } = await supabase
+            .from('missions')
+            .update({ progress: progress, is_completed: progress === 100 })
+            .eq('id', missionId);
+
+        if (error) toast.error('Failed to update progress');
+    },
+
+    fetchWishes: async () => {
+        const user = get().user;
+        if (!user) return;
+
+        const { data, error } = await supabase
+            .from('wishes')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false });
+
+        if (data) set({ wishes: data });
+    },
+
+    addWish: async (title, date) => {
+        const user = get().user;
+        if (!user) return;
+
+        const { data, error } = await supabase
+            .from('wishes')
+            .insert({ user_id: user.id, title, week_start_date: date })
+            .select()
+            .single();
+
+        if (data) {
+            set(state => ({ wishes: [data, ...state.wishes] }));
+            toast.success('Wish added successfully');
+        }
+    },
+
+    toggleWish: async (id, currentStatus) => {
+        set(state => ({
+            wishes: state.wishes.map(w => w.id === id ? { ...w, completed: !currentStatus } : w)
+        }));
+
+        await supabase.from('wishes').update({ completed: !currentStatus }).eq('id', id);
+    },
+
+    addVent: async (content) => {
+        const user = get().user;
+        // Venting doesn't strictly require a user if we want anonymous venting, but schema says user_id is nullable.
+        // If we want to capture history for Mohamed, we should send ID.
+
+        const { error } = await supabase
+            .from('venting_logs')
+            .insert({ user_id: user?.id || null, content });
+
+        if (!error) {
+            toast.success('Dissolved into the void...', { icon: '🍃' });
+        }
+    },
+
+    subscribeToChanges: () => {
+        const channels = [
+            supabase.channel('public:missions').on('postgres_changes', { event: '*', schema: 'public', table: 'missions' }, () => {
+                get().fetchPlan();
+            }).subscribe(),
+            supabase.channel('public:wishes').on('postgres_changes', { event: '*', schema: 'public', table: 'wishes' }, () => {
+                get().fetchWishes();
+            }).subscribe()
+        ];
+
+        // Store channels to unsubscribe later if needed, or just rely on global singleton in simple app
+    },
+
+    unsubscribe: () => {
+        supabase.removeAllChannels();
+    }
+}));

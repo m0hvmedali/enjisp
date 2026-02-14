@@ -71,9 +71,8 @@ export default function HomeTab() {
                     <div className="absolute inset-0 bg-gradient-to-t from-organic-dark via-organic-dark/50 to-transparent z-10" />
                     <img
                         src="/images/subjects/chemistry-schedule.png"
-                        className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-700"
                         alt="focus"
-                        style={{ filter: 'grayscale(100%)' }} // Start grayscale
                     />
                     <div className="relative z-20 p-8 flex flex-col justify-end h-full min-h-[200px]">
                         <div className="flex items-center gap-3 mb-4">
@@ -114,7 +113,7 @@ export default function HomeTab() {
                             {/* Background Image */}
                             <img
                                 src={subject.scheduleImage || 'https://images.unsplash.com/photo-1614728263952-84ea206f99b6?auto=format&fit=crop&q=80'}
-                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60"
+                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 alt={subject.name}
                             />
 

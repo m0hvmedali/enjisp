@@ -1,48 +1,52 @@
-export interface Mission {
+export type Role = 'admin' | 'user';
+
+export interface Profile {
     id: string;
-    title: string;
-    content: string;
-    duration: string;
-    method?: string;
-    outcome?: string;
-    completed: boolean;
-    links?: {
-        notebook?: string;
-        questions?: string;
-    };
-}
-
-export interface Unit {
-    name: string;
-    missions: Mission[];
-}
-
-export interface Section {
-    name: string;
-    missions: Mission[];
+    full_name: string | null;
+    role: Role;
+    avatar_url: string | null;
+    created_at: string;
 }
 
 export interface Subject {
     id: string;
     name: string;
-    icon: string;
-    theme: {
-        primary: string;
-        gradient: string;
-        scientist: string;
-    };
-    lessonDay?: string;
-    lessonDays?: string[];
-    missions?: Mission[];
-    units?: Unit[];
-    sections?: Section[];
-    scheduleImage?: string;
+    day_of_week: string | null; // e.g. 'Monday'
+    image_url: string | null; // Cinematic background
+    created_at?: string;
 }
 
-export interface StudyPlan {
-    subjects: Subject[];
-    philosophy: {
-        title: string;
-        principles: string[];
-    };
+export interface Mission {
+    id: string;
+    subject_id: string;
+    title: string;
+    description: string | null;
+    is_completed: boolean;
+    progress: number; // 0-100
+    notebook_link: string | null;
+    archive_link: string | null;
+    type: 'study' | 'solve' | 'revision';
+    created_at?: string;
+}
+
+export interface VentLog {
+    id: string;
+    user_id: string;
+    content: string;
+    created_at: string;
+}
+
+export interface Wish {
+    id: string;
+    user_id: string;
+    title: string;
+    completed: boolean;
+    week_start_date: string;
+    created_at: string;
+}
+
+// Frontend helper types (aggregations)
+export interface SubjectWithMissions extends Subject {
+    missions: Mission[];
+    progress?: number; // Calculated on frontend
 }
