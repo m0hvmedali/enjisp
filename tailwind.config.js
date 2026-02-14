@@ -9,28 +9,30 @@ module.exports = {
         extend: {
             colors: {
                 border: "rgba(255, 255, 255, 0.1)",
+                obsidian: {
+                    bg: '#000000',        // Pure Black
+                    card: '#0A0A0A',      // Subtle Depth
+                    surface: '#121212',   // Readable Surface
+                },
+                sage: {
+                    DEFAULT: '#A7D7C5',   // Primary Sage
+                    dim: '#74B796',       // Muted Sage
+                    glow: 'rgba(167, 215, 197, 0.15)',
+                },
+                alert: {
+                    pink: '#F4A4A4',      // Soft Warning
+                    red: '#FF2E63',       // Critical
+                },
+                // Mapping legacy 'organic' names to new Obsidian theme for compatibility
                 organic: {
-                    dark: '#050505',      // Deepest Black
-                    gray: '#121212',      // Surface Black
-                    green: '#00C853',     // Success/Growth Green
-                    beige: '#F0E6D2',     // Primary Text/Border
-                    pink: '#FF2E63',      // Accent/Alert Pink
-                    cream: '#FFF9E6',     // Highlight
+                    dark: '#000000',      // Was #050505
+                    gray: '#0A0A0A',      // Was #121212
+                    green: '#A7D7C5',     // Was #00C853 (Now Sage)
+                    beige: '#E0E0E0',     // Was #F0E6D2 (Now Off-white)
+                    pink: '#F4A4A4',      // Was #FF2E63 (Now Soft Pink)
+                    cream: '#FAFAFA',
+                    border: '#333333',
                 },
-                // Maintaining these for backward compatibility during refactor, but mapping to organic
-                dark: {
-                    bg: '#050505',
-                    card: '#121212',
-                    border: '#F0E6D2',
-                },
-                cine: {
-                    dark: '#050505',
-                    card: '#121212',
-                    accent: '#00C853',
-                    pink: '#FF2E63',
-                    red: '#FF2E63',
-                    blue: '#00C853',
-                }
             },
             fontFamily: {
                 arabic: ['Almarai', 'Tajawal', 'sans-serif'],
