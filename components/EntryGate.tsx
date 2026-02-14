@@ -64,7 +64,20 @@ export default function EntryGate() {
                         </h1>
 
                         {isLoading ? (
-                            <div className="text-organic-green animate-pulse">Scanning...</div>
+                            <div className="text-organic-green animate-pulse">Scanning DB...</div>
+                        ) : profiles.length === 0 ? (
+                            <div className="text-center space-y-4">
+                                <p className="text-red-400 font-bold">No Users Found</p>
+                                <div className="text-sm text-gray-400 bg-white/5 p-4 rounded-xl">
+                                    Please run <code>seed_v2.sql</code> in Supabase to create users.
+                                </div>
+                                <button
+                                    onClick={() => window.location.reload()}
+                                    className="px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+                                >
+                                    Retry
+                                </button>
+                            </div>
                         ) : (
                             <div className="flex gap-6">
                                 {profiles.map((profile) => (
